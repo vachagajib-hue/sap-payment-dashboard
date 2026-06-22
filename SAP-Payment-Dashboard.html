@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAP Payment Dashboard — รถเจาะไทย จำกัด</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #F0F2F5; --surface: #FFFFFF; --border: #E2E6EA;
+    --text: #1A2333; --muted: #6B7A8D;
+    --overdue: #E53935; --overdue-bg: #FFEBEE;
+    --today: #F9A825; --today-bg: #FFF8E1;
+    --upcoming: #2E7D32; --upcoming-bg: #E8F5E9;
+    --ap: #1565C0; --ap-bg: #E3F2FD;
+    --ar: #2E7D32; --ar-bg: #E8F5E9;
+  }
+  body { font-family: 'Sarabun', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; }
+  .site-header {
+    background: var(--ap); color: #fff; padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px; position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .site-header h1 { font-size: 18px; font-weight: 700; }
+  .site-header p  { font-size: 12px; opacity: 0.8; margin-top: 2px; }
+  .btn-refresh {
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+    color: #fff; padding: 8px 18px; border-radius: 6px; cursor: pointer;
+    font-family: 'Sarabun', sans-serif; font-size: 14px; font-weight: 500;
+    transition: background 0.2s; display: flex; align-items: center; gap: 6px;
+  }
+  .btn-refresh:hover { background: rgba(255,255,255,0.25); }
+  #last-update { font-size: 12px; opacity: 0.75; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 20px 16px; }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 24px; }
+  .card { background: var(--surface); border-radius: 10px; padding: 18px 20px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .card-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-bottom: 8px; }
+  .card-value { font-size: 24px; font-weight: 700; line-height: 1; }
+  .card-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .card.overdue { border-left: 4px solid var(--overdue); } .card.overdue .card-value { color: var(--overdue); }
+  .card.today   { border-left: 4px solid var(--today);   } .card.today   .card-value { color: var(--today); }
+  .card.upcoming{ border-left: 4px solid var(--upcoming);} .card.upcoming .card-value{ color: var(--upcoming); }
+  .card.ap      { border-left: 4px solid var(--ap);      } .card.ap      .card-value { color: var(--ap); }
+  .card.ar      { border-left: 4px solid var(--ar);      } .card.ar      .card-value { color: var(--ar); }
+  .alert-section { background: var(--today-bg); border: 1px solid var(--today); border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; }
+  .alert-section h3 { font-size: 14px; font-weight: 700; color: #B45309; margin-bottom: 10px; }
+  .alert-list { display: flex; flex-direction: column; gap: 6px; }
+  .alert-item { display: flex; align-items: center; justify-content: space-between; background: #fff; border-radius: 6px; padding: 8px 14px; font-size: 13px; border: 1px solid #FDE68A; flex-wrap: wrap; gap: 6px; }
+  .alert-item .days-left { font-weight: 700; color: var(--today); min-width: 60px; }
+  .alert-item .vendor { flex: 1; }
+  .alert-item .amount { font-weight: 600; color: var(--ap); }
+  .tabs { display: flex; gap: 4px; margin-bottom: 0; flex-wrap: wrap; }
+  .tab { padding: 9px 20px; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 14px; font-weight: 600; border: 1px solid var(--border); border-bottom: none; background: #E8EDF2; color: var(--muted); transition: all 0.2s; }
+  .tab.active { background: var(--surface); color: var(--ap); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .table-section { background: var(--surface); border-radius: 0 10px 10px 10px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.06); overflow: hidden; }
+  .table-toolbar { padding: 14px 16px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; border-bottom: 1px solid var(--border); }
+  .search-box { padding: 7px 12px; border: 1px solid var(--border); border-radius: 6px; font-family: 'Sarabun', sans-serif; font-size: 14px; width: 240px; outline: none; }
+  .search-box:focus { border-color: var(--ap); }
+  .filter-btn { padding: 7px 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-family: 'Sarabun', sans-serif; font-size: 13px; font-weight: 500; transition: all 0.15s; color: var(--text); }
+  .filter-btn:hover { background: var(--bg); }
+  .record-count { font-size: 13px; color: var(--muted); margin-left: auto; }
+  .table-wrap { overflow-x: auto; max-height: 480px; overflow-y: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { background: #F5F7FA; padding: 10px 12px; text-align: left; font-weight: 600; font-size: 12px; color: var(--muted); white-space: nowrap; position: sticky; top: 0; border-bottom: 1px solid var(--border); }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:hover { background: #F8FAFC; }
+  tbody td { padding: 9px 12px; white-space: nowrap; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  .badge-overdue  { background: var(--overdue-bg); color: var(--overdue); }
+  .badge-today    { background: var(--today-bg);   color: #B45309; }
+  .badge-upcoming { background: var(--upcoming-bg);color: var(--upcoming); }
+  .amt { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+  .red { color: var(--overdue); }
+  .loading-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+  .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--ap); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (max-width: 640px) {
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .search-box { width: 100%; }
+    .record-count { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div>
+    <h1>💰 SAP Payment Dashboard</h1>
+    <p>บริษัท รถเจาะไทย จำกัด</p>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <span id="last-update">กำลังโหลด...</span>
+    <button class="btn-refresh" onclick="loadAll()">🔄 รีเฟรชข้อมูล</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="summary-grid">
+    <div class="card overdue">
+      <div class="card-label">เกินกำหนด</div>
+      <div class="card-value" id="cnt-overdue">—</div>
+      <div class="card-sub" id="amt-overdue">รายการ</div>
+    </div>
+    <div class="card today">
+      <div class="card-label">ครบกำหนดวันนี้</div>
+      <div class="card-value" id="cnt-today">—</div>
+      <div class="card-sub" id="amt-today">รายการ</div>
+    </div>
+    <div class="card upcoming">
+      <div class="card-label">ยังไม่ถึงกำหนด</div>
+      <div class="card-value" id="cnt-upcoming">—</div>
+      <div class="card-sub" id="amt-upcoming">รายการ</div>
+    </div>
+    <div class="card ap">
+      <div class="card-label">ยอดค้างจ่ายรวม (THB)</div>
+      <div class="card-value" id="total-ap">—</div>
+      <div class="card-sub">Invoice + Outgoing</div>
+    </div>
+    <div class="card ar">
+      <div class="card-label">ยอดค้างรับรวม (THB)</div>
+      <div class="card-value" id="total-ar">—</div>
+      <div class="card-sub">AR Invoice</div>
+    </div>
+  </div>
+
+  <div class="alert-section" id="alert-section" style="display:none;">
+    <h3>⚠️ รายการครบกำหนดใน 7 วันข้างหน้า</h3>
+    <div class="alert-list" id="alert-list"></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('invoice')">📄 ค้างจ่าย-Invoice</div>
+    <div class="tab" onclick="switchTab('outgoing')">💸 ค้างจ่าย-Outgoing</div>
+    <div class="tab" onclick="switchTab('ar')">💰 ค้างรับ</div>
+  </div>
+
+  <!-- TAB INVOICE -->
+  <div class="tab-content active" id="tab-invoice">
+    <div class="table-section">
+      <div class="table-toolbar">
+        <input class="search-box" type="text" placeholder="🔍 ค้นหาชื่อเจ้าหนี้ / เลขที่..." oninput="filterTable('invoice',this.value)">
+        <button class="filter-btn" onclick="filterStatus('invoice','all')">ทั้งหมด</button>
+        <button class="filter-btn" onclick="filterStatus('invoice','Overdue')">🔴 เกิน</button>
+        <button class="filter-btn" onclick="filterStatus('invoice','Today')">🟡 วันนี้</button>
+        <button class="filter-btn" onclick="filterStatus('invoice','Upcoming')">🟢 ยังไม่ถึง</button>
+        <span class="record-count" id="count-invoice">—</span>
+      </div>
+      <div class="table-wrap">
+        <div class="loading-state" id="load-invoice"><div class="spinner"></div><p>กำลังโหลดข้อมูล...</p></div>
+        <table id="tbl-invoice" style="display:none;">
+          <thead><tr>
+            <th>เลขที่เอกสาร</th><th>วันที่เอกสาร</th><th>วันครบกำหนดจ่าย</th>
+            <th>เหลือ/เกิน(วัน)</th><th>สถานะ</th><th>รหัสเจ้าหนี้</th><th>ชื่อเจ้าหนี้</th>
+            <th>ยอดรวม Invoice</th><th>จ่ายแล้ว</th><th>ยังค้างจ่าย</th><th>สกุลเงิน</th>
+            <th>แผนก</th><th>สาขา/หน้างาน</th><th>Air Code</th><th>รายละเอียดสินค้า</th>
+            <th>จำนวน</th><th>หน่วย</th><th>ราคา/หน่วย</th><th>ยอดรายการ</th>
+            <th>สายงานหลัก</th><th>หน้างาน/แผนกย่อย</th><th>Project Code</th><th>ผู้บันทึก</th>
+          </tr></thead>
+          <tbody id="body-invoice"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB OUTGOING -->
+  <div class="tab-content" id="tab-outgoing">
+    <div class="table-section">
+      <div class="table-toolbar">
+        <input class="search-box" type="text" placeholder="🔍 ค้นหาชื่อเจ้าหนี้ / เลขที่..." oninput="filterTable('outgoing',this.value)">
+        <button class="filter-btn" onclick="filterStatus('outgoing','all')">ทั้งหมด</button>
+        <button class="filter-btn" onclick="filterStatus('outgoing','Overdue')">🔴 เกิน</button>
+        <button class="filter-btn" onclick="filterStatus('outgoing','Today')">🟡 วันนี้</button>
+        <button class="filter-btn" onclick="filterStatus('outgoing','Upcoming')">🟢 ยังไม่ถึง</button>
+        <span class="record-count" id="count-outgoing">—</span>
+      </div>
+      <div class="table-wrap">
+        <div class="loading-state" id="load-outgoing"><div class="spinner"></div><p>กำลังโหลดข้อมูล...</p></div>
+        <table id="tbl-outgoing" style="display:none;">
+          <thead><tr>
+            <th>เลขที่เอกสาร</th><th>วันที่เอกสาร</th><th>วันครบกำหนดจ่าย</th>
+            <th>เหลือ/เกิน(วัน)</th><th>สถานะ</th><th>รหัสเจ้าหนี้</th><th>ชื่อเจ้าหนี้</th>
+            <th>ยอดรวม</th><th>สกุลเงิน</th><th>วิธีการจ่าย</th>
+            <th>รหัสบัญชีธนาคาร</th><th>ชื่อบัญชีธนาคาร</th><th>เลขอ้างอิง</th>
+            <th>เลขที่เช็ค</th><th>วันที่บนเช็ค</th><th>ผู้บันทึก</th>
+          </tr></thead>
+          <tbody id="body-outgoing"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB AR -->
+  <div class="tab-content" id="tab-ar">
+    <div class="table-section">
+      <div class="table-toolbar">
+        <input class="search-box" type="text" placeholder="🔍 ค้นหาชื่อลูกค้า / เลขที่..." oninput="filterTable('ar',this.value)">
+        <button class="filter-btn" onclick="filterStatus('ar','all')">ทั้งหมด</button>
+        <button class="filter-btn" onclick="filterStatus('ar','Overdue')">🔴 เกิน</button>
+        <button class="filter-btn" onclick="filterStatus('ar','Today')">🟡 วันนี้</button>
+        <button class="filter-btn" onclick="filterStatus('ar','Upcoming')">🟢 ยังไม่ถึง</button>
+        <span class="record-count" id="count-ar">—</span>
+      </div>
+      <div class="table-wrap">
+        <div class="loading-state" id="load-ar"><div class="spinner"></div><p>กำลังโหลดข้อมูล...</p></div>
+        <table id="tbl-ar" style="display:none;">
+          <thead><tr>
+            <th>เลขที่เอกสาร</th><th>วันที่เอกสาร</th><th>วันครบกำหนด</th>
+            <th>เหลือ/เกิน(วัน)</th><th>สถานะ</th><th>รหัสลูกค้า</th><th>ชื่อลูกค้า</th>
+            <th>ยอดรวม Invoice</th><th>รับแล้ว</th><th>ยังค้างรับ</th><th>สกุลเงิน</th>
+            <th>เลข Invoice ลูกค้า</th><th>หมายเหตุ</th><th>ผู้บันทึก</th>
+          </tr></thead>
+          <tbody id="body-ar"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SHEET_ID = '1zR3NbaelQPioPiMpsMWeMVQstTcXhd2c0Ogpp7moEA4';
+const GIDS = { invoice: '396148801', outgoing: '956470448', ar: '367147328' };
+
+// Column mapping ตรงกับชื่อ Header จาก SAP จริงๆ
+const COL = {
+  invoice: {
+    docnum: 'เลขที่เอกสาร', docdate: 'วันที่เอกสาร', duedate: 'วันครบกำหนดจ่าย',
+    daysleft: 'เหลือ/เกิน(วัน)', status: 'Status',
+    vendorcode: 'รหัสเจ้าหนี้', vendorname: 'ชื่อเจ้าหนี้',
+    total: 'ยอดรวม Invoice', paid: 'จ่ายแล้ว', balance: 'ยังค้างจ่าย',
+    currency: 'สกุลเงิน', dept: 'แผนก', branch: 'สาขา/หน้างาน',
+    itemcode: 'Air Code / รหัสสินค้า', itemdesc: 'รายละเอียดสินค้า',
+    qty: 'จำนวน', unit: 'หน่วย', price: 'ราคาต่อหน่วย', linetotal: 'ยอดรวมรายการ',
+    cost: 'สายงานหลัก', cost2: 'หน้างาน/แผนกย่อย', project: 'Project Code',
+    createdby: 'ชื่อผู้บันทึก'
+  },
+  outgoing: {
+    docnum: 'DocNum', docdate: 'DocDate', duedate: 'DueDate',
+    daysleft: 'DaysLeft', status: 'Status',
+    vendorcode: 'VendorCode', vendorname: 'VendorName',
+    total: 'TotalAmt', currency: 'Currency', paymethod: 'PayMethod',
+    bankcode: 'BankAcctCode', bankname: 'BankAcctName',
+    ref: 'PaymentRef', checknum: 'CheckNum', checkdate: 'CheckDueDate',
+    createdby: 'CreatedBy'
+  },
+  ar: {
+    docnum: 'DocNum', docdate: 'DocDate', duedate: 'DueDate',
+    daysleft: 'DaysLeft', status: 'Status',
+    custcode: 'CustomerCode', custname: 'CustomerName',
+    total: 'TotalAmt', paid: 'PaidAmt', balance: 'BalanceAmt',
+    currency: 'Currency', custinv: 'CustomerInvoiceNo',
+    remarks: 'Remarks', createdby: 'CreatedBy'
+  }
+};
+
+let allData = { invoice: [], outgoing: [], ar: [] };
+let currentFilter = { invoice: 'all', outgoing: 'all', ar: 'all' };
+let currentSearch = { invoice: '', outgoing: '', ar: '' };
+
+function csvUrl(gid) {
+  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
+}
+
+async function fetchCSV(gid) {
+  const res = await fetch(csvUrl(gid));
+  if (!res.ok) throw new Error('โหลดไม่ได้ กรุณาตรวจสอบการ Publish Sheet');
+  const text = await res.text();
+  return parseCSV(text);
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = parseCSVLine(lines[0]);
+  return lines.slice(1).map(line => {
+    const vals = parseCSVLine(line);
+    const obj = {};
+    headers.forEach((h, i) => { obj[h] = (vals[i] || '').trim(); });
+    return obj;
+  });
+}
+
+function parseCSVLine(line) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') { inQ = !inQ; }
+    else if (c === ',' && !inQ) { result.push(cur); cur = ''; }
+    else { cur += c; }
+  }
+  result.push(cur);
+  return result;
+}
+
+function g(row, key) { return row[key] || ''; }
+
+function fmtNum(val) {
+  const n = parseFloat(val);
+  if (isNaN(n)) return '—';
+  return n.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function statusBadge(s) {
+  if (s === 'Overdue') return `<span class="badge badge-overdue">เกินกำหนด</span>`;
+  if (s === 'Today')   return `<span class="badge badge-today">วันนี้</span>`;
+  if (s === 'Upcoming')return `<span class="badge badge-upcoming">ยังไม่ถึง</span>`;
+  return s || '—';
+}
+
+function daysCell(val) {
+  const n = parseInt(val);
+  if (isNaN(n)) return '<td>—</td>';
+  let cls = '';
+  if (n < 0) cls = 'red';
+  else if (n <= 7) cls = 'style="color:#B45309;font-weight:700"';
+  return `<td class="${n<0?'red':''}" ${n>=0&&n<=7?'style="color:#B45309;font-weight:700"':''}>${n}</td>`;
+}
+
+function renderInvoice(rows) {
+  const c = COL.invoice;
+  document.getElementById('body-invoice').innerHTML = rows.map(r => `
+    <tr data-status="${g(r,c.status)}" data-search="${(g(r,c.vendorname)+g(r,c.docnum)).toLowerCase()}">
+      <td>${g(r,c.docnum)}</td><td>${g(r,c.docdate)}</td><td>${g(r,c.duedate)}</td>
+      ${daysCell(g(r,c.daysleft))}
+      <td>${statusBadge(g(r,c.status))}</td>
+      <td>${g(r,c.vendorcode)}</td><td>${g(r,c.vendorname)}</td>
+      <td class="amt">${fmtNum(g(r,c.total))}</td>
+      <td class="amt">${fmtNum(g(r,c.paid))}</td>
+      <td class="amt"><b>${fmtNum(g(r,c.balance))}</b></td>
+      <td>${g(r,c.currency)||'—'}</td>
+      <td>${g(r,c.dept)||'—'}</td><td>${g(r,c.branch)||'—'}</td>
+      <td>${g(r,c.itemcode)||'—'}</td><td>${g(r,c.itemdesc)||'—'}</td>
+      <td class="amt">${g(r,c.qty)||'—'}</td><td>${g(r,c.unit)||'—'}</td>
+      <td class="amt">${fmtNum(g(r,c.price))}</td>
+      <td class="amt">${fmtNum(g(r,c.linetotal))}</td>
+      <td>${g(r,c.cost)||'—'}</td><td>${g(r,c.cost2)||'—'}</td>
+      <td>${g(r,c.project)||'—'}</td><td>${g(r,c.createdby)||'—'}</td>
+    </tr>`).join('');
+}
+
+function renderOutgoing(rows) {
+  const c = COL.outgoing;
+  document.getElementById('body-outgoing').innerHTML = rows.map(r => `
+    <tr data-status="${g(r,c.status)}" data-search="${(g(r,c.vendorname)+g(r,c.docnum)).toLowerCase()}">
+      <td>${g(r,c.docnum)}</td><td>${g(r,c.docdate)}</td><td>${g(r,c.duedate)}</td>
+      ${daysCell(g(r,c.daysleft))}
+      <td>${statusBadge(g(r,c.status))}</td>
+      <td>${g(r,c.vendorcode)}</td><td>${g(r,c.vendorname)}</td>
+      <td class="amt">${fmtNum(g(r,c.total))}</td>
+      <td>${g(r,c.currency)||'—'}</td><td>${g(r,c.paymethod)||'—'}</td>
+      <td>${g(r,c.bankcode)||'—'}</td><td>${g(r,c.bankname)||'—'}</td>
+      <td>${g(r,c.ref)||'—'}</td><td>${g(r,c.checknum)||'—'}</td>
+      <td>${g(r,c.checkdate)||'—'}</td><td>${g(r,c.createdby)||'—'}</td>
+    </tr>`).join('');
+}
+
+function renderAR(rows) {
+  const c = COL.ar;
+  document.getElementById('body-ar').innerHTML = rows.map(r => `
+    <tr data-status="${g(r,c.status)}" data-search="${(g(r,c.custname)+g(r,c.docnum)).toLowerCase()}">
+      <td>${g(r,c.docnum)}</td><td>${g(r,c.docdate)}</td><td>${g(r,c.duedate)}</td>
+      ${daysCell(g(r,c.daysleft))}
+      <td>${statusBadge(g(r,c.status))}</td>
+      <td>${g(r,c.custcode)}</td><td>${g(r,c.custname)}</td>
+      <td class="amt">${fmtNum(g(r,c.total))}</td>
+      <td class="amt">${fmtNum(g(r,c.paid))}</td>
+      <td class="amt"><b>${fmtNum(g(r,c.balance))}</b></td>
+      <td>${g(r,c.currency)||'—'}</td>
+      <td>${g(r,c.custinv)||'—'}</td><td>${g(r,c.remarks)||'—'}</td>
+      <td>${g(r,c.createdby)||'—'}</td>
+    </tr>`).join('');
+}
+
+function applyFilters(type) {
+  const rows = document.querySelectorAll(`#body-${type} tr`);
+  const sf = currentFilter[type], st = currentSearch[type].toLowerCase();
+  let visible = 0;
+  rows.forEach(tr => {
+    const matchS = sf === 'all' || tr.dataset.status === sf;
+    const matchT = !st || (tr.dataset.search||'').includes(st);
+    tr.style.display = matchS && matchT ? '' : 'none';
+    if (matchS && matchT) visible++;
+  });
+  document.getElementById(`count-${type}`).textContent = `${visible} รายการ`;
+}
+
+function filterTable(type, val) { currentSearch[type] = val; applyFilters(type); }
+function filterStatus(type, s)  { currentFilter[type] = s;   applyFilters(type); }
+
+function updateSummary() {
+  const apAll = [...allData.invoice, ...allData.outgoing];
+  const ci = COL.invoice, co = COL.outgoing, ca = COL.ar;
+
+  const getStatus = (r, type) => type === 'invoice' ? g(r, ci.status) : g(r, co.status);
+
+  const cntO = apAll.filter(r => (r[ci.status]||r[co.status]) === 'Overdue').length;
+  const cntT = apAll.filter(r => (r[ci.status]||r[co.status]) === 'Today').length;
+  const cntU = apAll.filter(r => (r[ci.status]||r[co.status]) === 'Upcoming').length;
+
+  document.getElementById('cnt-overdue').textContent = cntO;
+  document.getElementById('cnt-today').textContent   = cntT;
+  document.getElementById('cnt-upcoming').textContent = cntU;
+
+  const sumAP = allData.invoice.reduce((s,r) => s+(parseFloat(g(r,ci.balance))||0), 0)
+              + allData.outgoing.reduce((s,r) => s+(parseFloat(g(r,co.total))||0), 0);
+  const sumAR = allData.ar.reduce((s,r) => s+(parseFloat(g(r,ca.balance))||0), 0);
+
+  document.getElementById('total-ap').textContent = sumAP.toLocaleString('th-TH',{maximumFractionDigits:0});
+  document.getElementById('total-ar').textContent = sumAR.toLocaleString('th-TH',{maximumFractionDigits:0});
+
+  // 7-day alert
+  const alerts7 = allData.invoice.filter(r => {
+    const d = parseInt(g(r,ci.daysleft));
+    return d >= 0 && d <= 7;
+  }).sort((a,b) => parseInt(g(a,ci.daysleft)) - parseInt(g(b,ci.daysleft)));
+
+  if (alerts7.length > 0) {
+    document.getElementById('alert-section').style.display = '';
+    document.getElementById('alert-list').innerHTML = alerts7.slice(0,10).map(r => `
+      <div class="alert-item">
+        <span class="days-left">${parseInt(g(r,ci.daysleft))===0?'วันนี้!':g(r,ci.daysleft)+' วัน'}</span>
+        <span class="vendor">${g(r,ci.vendorname)} <small style="color:var(--muted)">${g(r,ci.duedate)}</small></span>
+        <span class="amount">${fmtNum(g(r,ci.balance))} ${g(r,ci.currency)}</span>
+      </div>`).join('');
+  }
+}
+
+function showTable(type) {
+  document.getElementById(`load-${type}`).style.display = 'none';
+  document.getElementById(`tbl-${type}`).style.display = '';
+  const rows = document.querySelectorAll(`#body-${type} tr`);
+  document.getElementById(`count-${type}`).textContent = `${rows.length} รายการ`;
+}
+
+function showError(type, msg) {
+  document.getElementById(`load-${type}`).innerHTML =
+    `<div style="text-align:center;padding:40px;color:var(--muted)">
+      ⚠️ ไม่สามารถโหลดข้อมูลได้<br><small>${msg}</small><br><br>
+      <small>💡 ตรวจสอบว่า Google Sheets มีข้อมูล และ Publish เป็น CSV แล้วค่ะ</small>
+    </div>`;
+}
+
+async function loadAll() {
+  document.getElementById('last-update').textContent = 'กำลังโหลด...';
+  ['invoice','outgoing','ar'].forEach(t => {
+    document.getElementById(`load-${t}`).style.display = '';
+    document.getElementById(`load-${t}`).innerHTML = '<div class="spinner"></div><p>กำลังโหลดข้อมูล...</p>';
+    document.getElementById(`tbl-${t}`).style.display = 'none';
+  });
+
+  const [inv, out, ar] = await Promise.allSettled([
+    fetchCSV(GIDS.invoice), fetchCSV(GIDS.outgoing), fetchCSV(GIDS.ar)
+  ]);
+
+  if (inv.status==='fulfilled' && inv.value.length > 0) {
+    allData.invoice = inv.value; renderInvoice(inv.value); showTable('invoice');
+  } else { showError('invoice', inv.reason?.message||'ไม่มีข้อมูล'); }
+
+  if (out.status==='fulfilled' && out.value.length > 0) {
+    allData.outgoing = out.value; renderOutgoing(out.value); showTable('outgoing');
+  } else { showError('outgoing', out.reason?.message||'ไม่มีข้อมูล'); }
+
+  if (ar.status==='fulfilled' && ar.value.length > 0) {
+    allData.ar = ar.value; renderAR(ar.value); showTable('ar');
+  } else { showError('ar', ar.reason?.message||'ไม่มีข้อมูล'); }
+
+  updateSummary();
+  document.getElementById('last-update').textContent =
+    `อัปเดต: ${new Date().toLocaleTimeString('th-TH')}`;
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', ['invoice','outgoing','ar'][i]===name);
+  });
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById(`tab-${name}`).classList.add('active');
+}
+
+loadAll();
+</script>
+</body>
+</html>
