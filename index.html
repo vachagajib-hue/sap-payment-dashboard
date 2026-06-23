@@ -139,7 +139,6 @@
     <div class="tab" onclick="switchTab('ar')">💰 ค้างรับ</div>
   </div>
 
-  <!-- TAB INVOICE -->
   <div class="tab-content active" id="tab-invoice">
     <div class="table-section">
       <div class="table-toolbar">
@@ -167,7 +166,6 @@
     </div>
   </div>
 
-  <!-- TAB OUTGOING -->
   <div class="tab-content" id="tab-outgoing">
     <div class="table-section">
       <div class="table-toolbar">
@@ -182,11 +180,11 @@
         <div class="loading-state" id="load-outgoing"><div class="spinner"></div><p>กำลังโหลดข้อมูล...</p></div>
         <table id="tbl-outgoing" style="display:none;">
           <thead><tr>
-            <th>เลขที่เอกสาร</th><th>วันที่เอกสาร</th><th>วันครบกำหนดจ่าย</th>
+            <th>Document Number</th><th>Posting Date</th><th>DueDate</th>
             <th>เหลือ/เกิน(วัน)</th><th>สถานะ</th><th>รหัสเจ้าหนี้</th><th>ชื่อเจ้าหนี้</th>
             <th>ยอดรวม</th><th>สกุลเงิน</th><th>วิธีการจ่าย</th>
             <th>รหัสบัญชีธนาคาร</th><th>ชื่อบัญชีธนาคาร</th><th>เลขอ้างอิง</th>
-            <th>เลขที่เช็ค</th><th>วันที่บนเช็ค</th><th>ผู้บันทึก</th>
+            <th>เลขที่เช็ค</th><th>วันที่เช็ค</th><th>วันที่สร้าง</th><th>ผู้บันทึก</th>
           </tr></thead>
           <tbody id="body-outgoing"></tbody>
         </table>
@@ -194,7 +192,6 @@
     </div>
   </div>
 
-  <!-- TAB AR -->
   <div class="tab-content" id="tab-ar">
     <div class="table-section">
       <div class="table-toolbar">
@@ -223,10 +220,12 @@
 </div>
 
 <script>
-const SHEET_ID = '1zR3NbaelQPioPiMpsMWeMVQstTcXhd2c0Ogpp7moEA4';
-const GIDS = { invoice: '396148801', outgoing: '956470448', ar: '367147328' };
+// ====================================================
+// ใส่ Web App URL จาก Google Apps Script ตรงนี้
+// Deploy → New deployment → Web app → Copy URL
+// ====================================================
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzF9BB-FFVwF9ubHoMczz1-9MMVtCGPMbcFUdd7uKx_IZbKoXRnJCNhub8DWwnlZZOK/exec';
 
-// Column mapping ตรงกับชื่อ Header จาก SAP จริงๆ
 const COL = {
   invoice: {
     docnum: 'เลขที่เอกสาร', docdate: 'วันที่เอกสาร', duedate: 'วันครบกำหนดจ่าย',
@@ -237,24 +236,24 @@ const COL = {
     itemcode: 'Air Code / รหัสสินค้า', itemdesc: 'รายละเอียดสินค้า',
     qty: 'จำนวน', unit: 'หน่วย', price: 'ราคาต่อหน่วย', linetotal: 'ยอดรวมรายการ',
     cost: 'สายงานหลัก', cost2: 'หน้างาน/แผนกย่อย', project: 'Project Code',
-    createdby: 'ชื่อผู้บันทึก'
+    remarks: 'หมายเหตุ', createddate: 'วันที่สร้าง', createdby: 'ชื่อผู้บันทึก'
   },
   outgoing: {
-    docnum: 'DocNum', docdate: 'DocDate', duedate: 'DueDate',
-    daysleft: 'DaysLeft', status: 'Status',
+    docnum: 'Document Number', docdate: 'Posting Date', duedate: 'DueDate',
+    daysleft: 'DaysLeft', status: 'Created by Payment Run',
     vendorcode: 'VendorCode', vendorname: 'VendorName',
     total: 'TotalAmt', currency: 'Currency', paymethod: 'PayMethod',
     bankcode: 'BankAcctCode', bankname: 'BankAcctName',
-    ref: 'PaymentRef', checknum: 'CheckNum', checkdate: 'CheckDueDate',
-    createdby: 'CreatedBy'
+    ref: 'Payment Reference No.', checknum: 'Check Number', checkdate: 'CheckDueDate',
+    createddate: 'Creation Date', createdby: 'CreatedBy'
   },
   ar: {
-    docnum: 'DocNum', docdate: 'DocDate', duedate: 'DueDate',
+    docnum: 'Document Number', docdate: 'Posting Date', duedate: 'DueDate',
     daysleft: 'DaysLeft', status: 'Status',
     custcode: 'CustomerCode', custname: 'CustomerName',
     total: 'TotalAmt', paid: 'PaidAmt', balance: 'BalanceAmt',
     currency: 'Currency', custinv: 'CustomerInvoiceNo',
-    remarks: 'Remarks', createdby: 'CreatedBy'
+    remarks: 'Remarks', createddate: 'Creation Date', createdby: 'CreatedBy'
   }
 };
 
@@ -262,40 +261,16 @@ let allData = { invoice: [], outgoing: [], ar: [] };
 let currentFilter = { invoice: 'all', outgoing: 'all', ar: 'all' };
 let currentSearch = { invoice: '', outgoing: '', ar: '' };
 
-function csvUrl(gid) {
-  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
-}
-
-async function fetchCSV(gid) {
-  const res = await fetch(csvUrl(gid));
-  if (!res.ok) throw new Error('โหลดไม่ได้ กรุณาตรวจสอบการ Publish Sheet');
-  const text = await res.text();
-  return parseCSV(text);
-}
-
-function parseCSV(text) {
-  const lines = text.trim().split('\n');
-  if (lines.length < 2) return [];
-  const headers = parseCSVLine(lines[0]);
-  return lines.slice(1).map(line => {
-    const vals = parseCSVLine(line);
-    const obj = {};
-    headers.forEach((h, i) => { obj[h] = (vals[i] || '').trim(); });
-    return obj;
-  });
-}
-
-function parseCSVLine(line) {
-  const result = [];
-  let cur = '', inQ = false;
-  for (let i = 0; i < line.length; i++) {
-    const c = line[i];
-    if (c === '"') { inQ = !inQ; }
-    else if (c === ',' && !inQ) { result.push(cur); cur = ''; }
-    else { cur += c; }
+async function fetchSheet(type) {
+  if (!GAS_URL || GAS_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL') {
+    throw new Error('กรุณาใส่ Apps Script Web App URL ใน GAS_URL ก่อนค่ะ');
   }
-  result.push(cur);
-  return result;
+  const url = GAS_URL + '?type=' + type;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('โหลดไม่ได้ (HTTP ' + res.status + ')');
+  const json = await res.json();
+  if (json.error) throw new Error(json.error);
+  return json.data || [];
 }
 
 function g(row, key) { return row[key] || ''; }
@@ -316,9 +291,6 @@ function statusBadge(s) {
 function daysCell(val) {
   const n = parseInt(val);
   if (isNaN(n)) return '<td>—</td>';
-  let cls = '';
-  if (n < 0) cls = 'red';
-  else if (n <= 7) cls = 'style="color:#B45309;font-weight:700"';
   return `<td class="${n<0?'red':''}" ${n>=0&&n<=7?'style="color:#B45309;font-weight:700"':''}>${n}</td>`;
 }
 
@@ -346,18 +318,21 @@ function renderInvoice(rows) {
 
 function renderOutgoing(rows) {
   const c = COL.outgoing;
-  document.getElementById('body-outgoing').innerHTML = rows.map(r => `
-    <tr data-status="${g(r,c.status)}" data-search="${(g(r,c.vendorname)+g(r,c.docnum)).toLowerCase()}">
+  document.getElementById('body-outgoing').innerHTML = rows.map(r => {
+    const ds = statusFromDays(parseInt(g(r,c.daysleft)));
+    return `<tr data-status="${ds}" data-search="${(g(r,c.vendorname)+g(r,c.docnum)).toLowerCase()}">
       <td>${g(r,c.docnum)}</td><td>${g(r,c.docdate)}</td><td>${g(r,c.duedate)}</td>
       ${daysCell(g(r,c.daysleft))}
-      <td>${statusBadge(g(r,c.status))}</td>
+      <td>${statusBadge(ds)}</td>
       <td>${g(r,c.vendorcode)}</td><td>${g(r,c.vendorname)}</td>
       <td class="amt">${fmtNum(g(r,c.total))}</td>
       <td>${g(r,c.currency)||'—'}</td><td>${g(r,c.paymethod)||'—'}</td>
       <td>${g(r,c.bankcode)||'—'}</td><td>${g(r,c.bankname)||'—'}</td>
       <td>${g(r,c.ref)||'—'}</td><td>${g(r,c.checknum)||'—'}</td>
-      <td>${g(r,c.checkdate)||'—'}</td><td>${g(r,c.createdby)||'—'}</td>
-    </tr>`).join('');
+      <td>${g(r,c.checkdate)||'—'}</td>
+      <td>${g(r,c.createddate)||'—'}</td><td>${g(r,c.createdby)||'—'}</td>
+    </tr>`;
+  }).join('');
 }
 
 function renderAR(rows) {
@@ -393,40 +368,50 @@ function applyFilters(type) {
 function filterTable(type, val) { currentSearch[type] = val; applyFilters(type); }
 function filterStatus(type, s)  { currentFilter[type] = s;   applyFilters(type); }
 
+function statusFromDays(d) {
+  if (isNaN(d)) return '';
+  if (d < 0)  return 'Overdue';
+  if (d === 0) return 'Today';
+  return 'Upcoming';
+}
+
 function updateSummary() {
-  const apAll = [...allData.invoice, ...allData.outgoing];
   const ci = COL.invoice, co = COL.outgoing, ca = COL.ar;
 
-  const getStatus = (r, type) => type === 'invoice' ? g(r, ci.status) : g(r, co.status);
+  // Invoice ใช้ Status column / Outgoing คำนวณจาก DaysLeft
+  const invStatus  = allData.invoice.map(r => g(r, ci.status));
+  const outStatus  = allData.outgoing.map(r => statusFromDays(parseInt(g(r, co.daysleft))));
+  const allStatus  = [...invStatus, ...outStatus];
 
-  const cntO = apAll.filter(r => (r[ci.status]||r[co.status]) === 'Overdue').length;
-  const cntT = apAll.filter(r => (r[ci.status]||r[co.status]) === 'Today').length;
-  const cntU = apAll.filter(r => (r[ci.status]||r[co.status]) === 'Upcoming').length;
+  document.getElementById('cnt-overdue').textContent  = allStatus.filter(s => s === 'Overdue').length;
+  document.getElementById('cnt-today').textContent    = allStatus.filter(s => s === 'Today').length;
+  document.getElementById('cnt-upcoming').textContent = allStatus.filter(s => s === 'Upcoming').length;
 
-  document.getElementById('cnt-overdue').textContent = cntO;
-  document.getElementById('cnt-today').textContent   = cntT;
-  document.getElementById('cnt-upcoming').textContent = cntU;
-
-  const sumAP = allData.invoice.reduce((s,r) => s+(parseFloat(g(r,ci.balance))||0), 0)
+  const sumAP = allData.invoice.reduce((s,r)  => s+(parseFloat(g(r,ci.balance))||0), 0)
               + allData.outgoing.reduce((s,r) => s+(parseFloat(g(r,co.total))||0), 0);
   const sumAR = allData.ar.reduce((s,r) => s+(parseFloat(g(r,ca.balance))||0), 0);
 
   document.getElementById('total-ap').textContent = sumAP.toLocaleString('th-TH',{maximumFractionDigits:0});
   document.getElementById('total-ar').textContent = sumAR.toLocaleString('th-TH',{maximumFractionDigits:0});
 
-  // 7-day alert
-  const alerts7 = allData.invoice.filter(r => {
-    const d = parseInt(g(r,ci.daysleft));
-    return d >= 0 && d <= 7;
-  }).sort((a,b) => parseInt(g(a,ci.daysleft)) - parseInt(g(b,ci.daysleft)));
+  // Alert 7 วัน — รวม Invoice + Outgoing
+  const alerts7inv = allData.invoice.filter(r => {
+    const d = parseInt(g(r,ci.daysleft)); return d >= 0 && d <= 7;
+  }).map(r => ({ days: parseInt(g(r,ci.daysleft)), name: g(r,ci.vendorname), due: g(r,ci.duedate), amt: g(r,ci.balance), cur: g(r,ci.currency) }));
+
+  const alerts7out = allData.outgoing.filter(r => {
+    const d = parseInt(g(r,co.daysleft)); return d >= 0 && d <= 7;
+  }).map(r => ({ days: parseInt(g(r,co.daysleft)), name: g(r,co.vendorname), due: g(r,co.duedate), amt: g(r,co.total), cur: g(r,co.currency) }));
+
+  const alerts7 = [...alerts7inv, ...alerts7out].sort((a,b) => a.days - b.days);
 
   if (alerts7.length > 0) {
     document.getElementById('alert-section').style.display = '';
-    document.getElementById('alert-list').innerHTML = alerts7.slice(0,10).map(r => `
+    document.getElementById('alert-list').innerHTML = alerts7.slice(0,10).map(a => `
       <div class="alert-item">
-        <span class="days-left">${parseInt(g(r,ci.daysleft))===0?'วันนี้!':g(r,ci.daysleft)+' วัน'}</span>
-        <span class="vendor">${g(r,ci.vendorname)} <small style="color:var(--muted)">${g(r,ci.duedate)}</small></span>
-        <span class="amount">${fmtNum(g(r,ci.balance))} ${g(r,ci.currency)}</span>
+        <span class="days-left">${a.days===0?'วันนี้!':a.days+' วัน'}</span>
+        <span class="vendor">${a.name} <small style="color:var(--muted)">${a.due}</small></span>
+        <span class="amount">${fmtNum(a.amt)} ${a.cur}</span>
       </div>`).join('');
   }
 }
@@ -455,7 +440,7 @@ async function loadAll() {
   });
 
   const [inv, out, ar] = await Promise.allSettled([
-    fetchCSV(GIDS.invoice), fetchCSV(GIDS.outgoing), fetchCSV(GIDS.ar)
+    fetchSheet('invoice'), fetchSheet('outgoing'), fetchSheet('ar')
   ]);
 
   if (inv.status==='fulfilled' && inv.value.length > 0) {
