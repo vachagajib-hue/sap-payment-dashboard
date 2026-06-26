@@ -568,8 +568,9 @@ function renderTodaySection() {
   const co = COL.outgoing, ca = COL.ar;
   const now = new Date(); now.setHours(0,0,0,0);
 
+  // ดึงรายการที่ Posting Date = วันนี้
   const todayOut = allData.outgoing.filter(r => {
-    const rd = parseDueDate(g(r, co.duedate));
+    const rd = parseDueDate(g(r, co.docdate));
     return rd && rd.getTime() === now.getTime();
   });
   const sumOut = todayOut.reduce((s,r) => s+(parseFloat(g(r,co.total))||0), 0);
@@ -588,8 +589,9 @@ function renderTodaySection() {
         <span class="tr-amt-out">${fmtNum(g(r,co.total))}</span>
       </div>`).join('');
 
+  // ดึงรายการที่ Posting Date = วันนี้
   const todayIn = allData.ar.filter(r => {
-    const rd = parseDueDate(g(r, ca.duedate));
+    const rd = parseDueDate(g(r, ca.docdate));
     return rd && rd.getTime() === now.getTime();
   });
   const sumIn = todayIn.reduce((s,r) => s+(parseFloat(g(r,ca.balance))||0), 0);
