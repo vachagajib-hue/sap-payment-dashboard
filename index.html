@@ -78,8 +78,47 @@
   .loading-state { text-align: center; padding: 60px 20px; color: var(--muted); }
   .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--ap); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
   @keyframes spin { to { transform: rotate(360deg); } }
+  /* KPI Section */
+  .kpi-section { margin-bottom: 14px; }
+  .kpi-section-hd { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 0.6px; text-transform: uppercase; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .kpi-card { background: var(--surface); border-radius: 10px; border: 1px solid var(--border); padding: 14px 16px 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .kpi-card.ap-card { border-top: 3px solid var(--ap); }
+  .kpi-card.ar-card { border-top: 3px solid var(--ar); }
+  .kpi-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin-bottom: 8px; }
+  .kpi-val { font-size: 22px; font-weight: 700; line-height: 1; }
+  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .kpi-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border); }
+  .kpi-tag { font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+  .tag-red { background: var(--overdue-bg); color: var(--overdue); }
+  .tag-yellow { background: var(--today-bg); color: #B45309; }
+  .tag-blue { background: var(--ap-bg); color: var(--ap); }
+  .tag-green { background: var(--ar-bg); color: var(--ar); }
+  .det-btn { font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border); background: transparent; cursor: pointer; color: var(--muted); font-family: 'Sarabun', sans-serif; transition: background 0.15s; }
+  .det-btn:hover { background: var(--bg); }
+  .c-red { color: var(--overdue); } .c-yellow { color: var(--today); } .c-blue { color: var(--ap); } .c-green { color: var(--ar); }
+  /* Alert แยก AP/AR */
+  .alert-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .alert-box { border-radius: 10px; padding: 14px 16px; }
+  .alert-box.ap-alert { background: #EFF6FF; border: 1px solid #93C5FD; }
+  .alert-box.ar-alert { background: #F0FDF4; border: 1px solid #86EFAC; }
+  .alert-hd { font-size: 13px; font-weight: 700; margin: 0 0 10px; display: flex; align-items: center; gap: 6px; }
+  .alert-hd.ap-hd { color: #1D4ED8; }
+  .alert-hd.ar-hd { color: #15803D; }
+  .alert-row { display: flex; align-items: center; justify-content: space-between; background: #fff; border-radius: 6px; padding: 7px 12px; font-size: 12px; margin-bottom: 5px; border: 1px solid var(--border); gap: 6px; }
+  .alert-row:last-child { margin-bottom: 0; }
+  .a-days-ap { font-weight: 700; color: #1D4ED8; min-width: 45px; font-size: 12px; }
+  .a-days-ar { font-weight: 700; color: #15803D; min-width: 45px; font-size: 12px; }
+  .a-name { flex: 1; }
+  .a-date { font-size: 10px; color: var(--muted); display: block; }
+  .a-amt-ap { font-weight: 600; color: var(--ap); white-space: nowrap; }
+  .a-amt-ar { font-weight: 600; color: var(--ar); white-space: nowrap; }
+  /* Btn Report */
+  .btn-report { background: #F9A825; color: #4a3000; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-family: 'Sarabun', sans-serif; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: background 0.2s; }
+  .btn-report:hover { background: #F59E0B; }
   @media (max-width: 640px) {
-    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .kpi-grid { grid-template-columns: 1fr; }
+    .alert-grid { grid-template-columns: 1fr; }
     .search-box { width: 100%; }
     .record-count { margin-left: 0; }
   }
@@ -92,45 +131,96 @@
     <h1>💰 SAP Payment Dashboard</h1>
     <p>บริษัท รถเจาะไทย จำกัด</p>
   </div>
-  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
     <span id="last-update">กำลังโหลด...</span>
+    <button class="btn-report" onclick="openReport()">📊 รายงานผู้บริหาร</button>
     <button class="btn-refresh" onclick="loadAll()">🔄 รีเฟรชข้อมูล</button>
   </div>
 </header>
 
 <div class="container">
 
-  <div class="summary-grid">
-    <div class="card overdue">
-      <div class="card-label">เกินกำหนด</div>
-      <div class="card-value" id="cnt-overdue">—</div>
-      <div class="card-sub" id="amt-overdue">รายการ</div>
-    </div>
-    <div class="card today">
-      <div class="card-label">ครบกำหนดวันนี้</div>
-      <div class="card-value" id="cnt-today">—</div>
-      <div class="card-sub" id="amt-today">รายการ</div>
-    </div>
-    <div class="card upcoming">
-      <div class="card-label">ยังไม่ถึงกำหนด</div>
-      <div class="card-value" id="cnt-upcoming">—</div>
-      <div class="card-sub" id="amt-upcoming">รายการ</div>
-    </div>
-    <div class="card ap">
-      <div class="card-label">ยอดค้างจ่ายรวม (THB)</div>
-      <div class="card-value" id="total-ap">—</div>
-      <div class="card-sub">Invoice + Outgoing</div>
-    </div>
-    <div class="card ar">
-      <div class="card-label">ยอดค้างรับรวม (THB)</div>
-      <div class="card-value" id="total-ar">—</div>
-      <div class="card-sub">AR Invoice</div>
+  <!-- AP KPI -->
+  <div class="kpi-section">
+    <div class="kpi-section-hd">⬆️ เจ้าหนี้การค้า (AP)</div>
+    <div class="kpi-grid">
+      <div class="kpi-card ap-card">
+        <div class="kpi-lbl">เกินกำหนดชำระ</div>
+        <div class="kpi-val c-red" id="ap-cnt-overdue">—</div>
+        <div class="kpi-sub">รายการ</div>
+        <div class="kpi-foot">
+          <span class="kpi-tag tag-red">เร่งด่วน</span>
+          <button class="det-btn" onclick="gotoTab('invoice','Overdue')">รายละเอียด ↗</button>
+        </div>
+      </div>
+      <div class="kpi-card ap-card">
+        <div class="kpi-lbl">ครบกำหนดวันนี้</div>
+        <div class="kpi-val c-yellow" id="ap-cnt-today">—</div>
+        <div class="kpi-sub">รายการ</div>
+        <div class="kpi-foot">
+          <span class="kpi-tag tag-yellow">ดำเนินการด่วน</span>
+          <button class="det-btn" onclick="gotoTab('invoice','Today')">รายละเอียด ↗</button>
+        </div>
+      </div>
+      <div class="kpi-card ap-card">
+        <div class="kpi-lbl">ยอดค้างจ่ายรวม (THB)</div>
+        <div class="kpi-val c-blue" id="total-ap" style="font-size:18px;">—</div>
+        <div class="kpi-sub">Invoice + Outgoing</div>
+        <div class="kpi-foot">
+          <span class="kpi-tag tag-blue">AP รวม</span>
+          <button class="det-btn" onclick="gotoTab('invoice','all')">รายละเอียด ↗</button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="alert-section" id="alert-section" style="display:none;">
-    <h3>⚠️ รายการครบกำหนดใน 7 วันข้างหน้า</h3>
-    <div class="alert-list" id="alert-list"></div>
+  <!-- AR KPI -->
+  <div class="kpi-section">
+    <div class="kpi-section-hd">⬇️ ลูกหนี้การค้า (AR)</div>
+    <div class="kpi-grid">
+      <div class="kpi-card ar-card">
+        <div class="kpi-lbl">เกินกำหนดรับชำระ</div>
+        <div class="kpi-val c-red" id="ar-cnt-overdue">—</div>
+        <div class="kpi-sub">รายการ</div>
+        <div class="kpi-foot">
+          <span class="kpi-tag tag-red">ติดตามด่วน</span>
+          <button class="det-btn" onclick="gotoTab('ar','Overdue')">รายละเอียด ↗</button>
+        </div>
+      </div>
+      <div class="kpi-card ar-card">
+        <div class="kpi-lbl">ครบกำหนดวันนี้</div>
+        <div class="kpi-val c-yellow" id="ar-cnt-today">—</div>
+        <div class="kpi-sub">รายการ</div>
+        <div class="kpi-foot">
+          <span class="kpi-tag tag-yellow">ติดตามลูกค้า</span>
+          <button class="det-btn" onclick="gotoTab('ar','Today')">รายละเอียด ↗</button>
+        </div>
+      </div>
+      <div class="kpi-card ar-card">
+        <div class="kpi-lbl">ยอดค้างรับรวม (THB)</div>
+        <div class="kpi-val c-green" id="total-ar" style="font-size:18px;">—</div>
+        <div class="kpi-sub">AR Invoice</div>
+        <div class="kpi-foot">
+          <span class="kpi-tag tag-green">AR รวม</span>
+          <button class="det-btn" onclick="gotoTab('ar','all')">รายละเอียด ↗</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alert 7 วัน แยก AP/AR -->
+  <div id="alert-section" style="display:none; margin-bottom:20px;">
+    <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px;">⏰ รายการครบกำหนดใน 7 วันข้างหน้า</div>
+    <div class="alert-grid">
+      <div class="alert-box ap-alert">
+        <div class="alert-hd ap-hd">⬆️ เจ้าหนี้ (AP) — ต้องจ่าย</div>
+        <div id="alert-list-ap"><div style="text-align:center;padding:12px;color:var(--muted);font-size:12px;">ไม่มีรายการ</div></div>
+      </div>
+      <div class="alert-box ar-alert">
+        <div class="alert-hd ar-hd">⬇️ ลูกหนี้ (AR) — รอรับชำระ</div>
+        <div id="alert-list-ar"><div style="text-align:center;padding:12px;color:var(--muted);font-size:12px;">ไม่มีรายการ</div></div>
+      </div>
+    </div>
   </div>
 
   <div class="tabs">
