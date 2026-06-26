@@ -469,9 +469,9 @@ function updateSummary() {
   const ci = COL.invoice, co = COL.outgoing, ca = COL.ar;
 
   // Invoice ใช้ Status column / Outgoing คำนวณจาก DaysLeft
-  const invStatus  = allData.invoice.map(r => g(r, ci.status));
-  const outStatus  = allData.outgoing.map(r => statusFromDays(parseInt(g(r, co.daysleft))));
-  const allStatus  = [...invStatus, ...outStatus];
+  const invStatus = allData.invoice.map(r => g(r, ci.status));
+  const outStatus = allData.outgoing.map(r => statusFromDays(parseInt(g(r, co.daysleft))));
+  const apStatus  = [...invStatus, ...outStatus];
 
   document.getElementById('ap-cnt-overdue').textContent = apStatus.filter(s => s === 'Overdue').length;
   document.getElementById('ap-cnt-today').textContent   = apStatus.filter(s => s === 'Today').length;
