@@ -87,7 +87,8 @@
   .kpi-card.ar-card { border-top: 5px solid var(--ar); }
   .kpi-lbl { font-size: 15px; font-weight: 600; color: var(--muted); margin-bottom: 14px; }
   .kpi-val { font-size: 48px; font-weight: 700; line-height: 1; }
-  .kpi-sub { font-size: 15px; color: var(--muted); margin-top: 8px; }
+  .kpi-val-amt { font-size: 32px; font-weight: 700; line-height: 1; }
+  .kpi-sub { font-size: 14px; color: var(--muted); margin-top: 8px; }
   .kpi-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); }
   .kpi-tag { font-size: 13px; padding: 5px 14px; border-radius: 20px; font-weight: 600; }
   .tag-red { background: var(--overdue-bg); color: var(--overdue); }
@@ -116,9 +117,46 @@
   /* Btn Report */
   .btn-report { background: #F9A825; color: #4a3000; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-family: 'Sarabun', sans-serif; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: background 0.2s; }
   .btn-report:hover { background: #F59E0B; }
+  /* Today Section */
+  .today-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+  .today-box { background: var(--surface); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; }
+  .today-hd { padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+  .today-hd-left { display: flex; align-items: center; gap: 10px; }
+  .today-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .today-title { font-size: 15px; font-weight: 700; }
+  .today-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
+  .today-badge { font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+  .today-summary { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--border); }
+  .today-stat { padding: 14px 18px; }
+  .today-stat:first-child { border-right: 1px solid var(--border); }
+  .ts-lbl { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .ts-val { font-size: 22px; font-weight: 700; }
+  .ts-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .today-list { max-height: 200px; overflow-y: auto; }
+  .today-row { display: flex; align-items: center; padding: 9px 18px; border-bottom: 1px solid #F0F2F5; gap: 10px; font-size: 13px; }
+  .today-row:last-child { border-bottom: none; }
+  .today-row:hover { background: #F8FAFC; }
+  .tr-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tr-num { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .tr-amt-out { font-weight: 600; color: #E65100; white-space: nowrap; }
+  .tr-amt-in  { font-weight: 600; color: var(--ar); white-space: nowrap; }
+  .empty-today { padding: 24px; text-align: center; color: var(--muted); font-size: 13px; }
+  /* Dropdown filter */
+  .dd-wrap { position: relative; display: inline-block; }
+  .dd-btn { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); cursor: pointer; font-size: 14px; color: var(--text); font-family: 'Sarabun', sans-serif; min-width: 160px; justify-content: space-between; }
+  .dd-btn:hover { border-color: var(--ap); }
+  .dd-panel { position: absolute; top: calc(100% + 4px); left: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px; z-index: 200; min-width: 210px; box-shadow: 0 4px 14px rgba(0,0,0,.1); }
+  .dd-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; cursor: pointer; font-size: 13px; color: var(--text); }
+  .dd-item:hover { background: var(--bg); }
+  .dd-item input[type=checkbox] { width: 15px; height: 15px; accent-color: var(--ap); cursor: pointer; flex-shrink: 0; }
+  .dd-sep { border-top: 1px solid var(--border); margin: 4px 0; }
+  .dd-footer { display: flex; gap: 6px; padding-top: 6px; border-top: 1px solid var(--border); margin-top: 4px; }
+  .btn-apply-dd { background: var(--ap); color: #fff; border: none; padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; font-family: 'Sarabun', sans-serif; }
+  .btn-reset-dd { background: var(--surface); color: var(--muted); border: 1px solid var(--border); padding: 7px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: 'Sarabun', sans-serif; }
   @media (max-width: 640px) {
     .kpi-grid { grid-template-columns: 1fr; }
     .alert-grid { grid-template-columns: 1fr; }
+    .today-grid { grid-template-columns: 1fr; }
     .search-box { width: 100%; }
     .record-count { margin-left: 0; }
   }
@@ -167,7 +205,7 @@
       </div>
       <div class="kpi-card ap-card">
         <div class="kpi-lbl">ยอดค้างจ่ายรวม (THB)</div>
-        <div class="kpi-val c-blue" id="total-ap" style="font-size:36px;">—</div>
+        <div class="kpi-val c-blue" id="total-ap" class="kpi-val-amt c-blue">—</div>
         <div class="kpi-sub">Invoice + Outgoing</div>
         <div class="kpi-foot">
           <span class="kpi-tag tag-blue">AP รวม</span>
@@ -201,7 +239,7 @@
       </div>
       <div class="kpi-card ar-card">
         <div class="kpi-lbl">ยอดค้างรับรวม (THB)</div>
-        <div class="kpi-val c-green" id="total-ar" style="font-size:36px;">—</div>
+        <div class="kpi-val c-green" id="total-ar" class="kpi-val-amt c-green">—</div>
         <div class="kpi-sub">AR Invoice</div>
         <div class="kpi-foot">
           <span class="kpi-tag tag-green">AR รวม</span>
@@ -211,23 +249,89 @@
     </div>
   </div>
 
-  <!-- Filter เดือน/ปี Dashboard หลัก -->
-  <div id="dash-filter-bar" style="background:var(--surface);border-radius:10px;border:1px solid var(--border);padding:12px 18px;margin-bottom:16px;display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;">
-    <div style="font-size:13px;font-weight:600;color:var(--muted);padding-top:4px;">📅 กรองข้อมูล:</div>
-    <div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">เดือน/ปี (เลือกได้หลายรายการ)</div>
-      <select id="dash-month-filter" multiple size="4" style="border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'Sarabun',sans-serif;padding:4px 8px;min-width:160px;max-width:200px;background:var(--surface);color:var(--text);">
-        <option value="all" selected>ทั้งหมด</option>
-      </select>
+  <!-- Filter วันครบกำหนดจ่าย — Dropdown ซ่อน -->
+  <div style="background:var(--surface);border-radius:10px;border:1px solid var(--border);padding:12px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+    <span style="font-size:14px;font-weight:600;color:var(--muted);">📅 วันครบกำหนดจ่าย</span>
+    <div class="dd-wrap">
+      <button class="dd-btn" onclick="toggleDashDD()">
+        <span id="dash-dd-label">ทั้งหมด</span>
+        <span style="font-size:12px;color:var(--muted);">▾</span>
+      </button>
+      <div class="dd-panel" id="dash-dd" style="display:none;">
+        <div class="dd-item"><input type="checkbox" id="dm-all" checked onchange="dashToggleAll(this)"> <label for="dm-all" style="cursor:pointer;">ทั้งหมด</label></div>
+        <div class="dd-sep"></div>
+        <div id="dash-month-opts"></div>
+        <div class="dd-footer">
+          <button class="btn-apply-dd" onclick="applyDashDD()">นำไปใช้</button>
+          <button class="btn-reset-dd" onclick="resetDashDD()">รีเซ็ต</button>
+        </div>
+      </div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:6px;padding-top:20px;">
-      <button onclick="applyDashFilter()" style="background:var(--ap);color:#fff;border:none;padding:7px 16px;border-radius:6px;font-size:13px;cursor:pointer;font-family:'Sarabun',sans-serif;font-weight:600;">กรอง</button>
-      <button onclick="resetDashFilter()" style="background:var(--surface);color:var(--muted);border:1px solid var(--border);padding:7px 16px;border-radius:6px;font-size:13px;cursor:pointer;font-family:'Sarabun',sans-serif;">รีเซ็ต</button>
-    </div>
-    <div style="font-size:11px;color:var(--muted);padding-top:24px;">Ctrl+Click เพื่อเลือกหลายเดือน</div>
+    <span style="font-size:12px;color:var(--muted);">เลือกได้หลายเดือน</span>
   </div>
 
   <!-- Alert 7 วัน แยก AP/AR -->
+  <!-- รายการวันนี้ -->
+  <div style="font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px;">
+    📅 รายการวันนี้
+  </div>
+  <div class="today-grid">
+    <div class="today-box">
+      <div class="today-hd">
+        <div class="today-hd-left">
+          <div class="today-icon" style="background:#FFF3E0;">💸</div>
+          <div>
+            <div class="today-title" style="color:#E65100;">Outgoing วันนี้</div>
+            <div class="today-sub">รายการสั่งจ่ายออกวันนี้</div>
+          </div>
+        </div>
+        <span class="today-badge" id="out-badge" style="background:#FFF3E0;color:#E65100;">0 รายการ</span>
+      </div>
+      <div class="today-summary">
+        <div class="today-stat">
+          <div class="ts-lbl">ยอดรวม (THB)</div>
+          <div class="ts-val" id="out-total" style="color:#E65100;">—</div>
+          <div class="ts-sub">สั่งจ่ายออกวันนี้</div>
+        </div>
+        <div class="today-stat">
+          <div class="ts-lbl">จำนวนรายการ</div>
+          <div class="ts-val" id="out-count" style="color:var(--ap);">—</div>
+          <div class="ts-sub">เอกสาร</div>
+        </div>
+      </div>
+      <div class="today-list" id="out-list">
+        <div class="empty-today">กำลังโหลด...</div>
+      </div>
+    </div>
+    <div class="today-box">
+      <div class="today-hd">
+        <div class="today-hd-left">
+          <div class="today-icon" style="background:#E8F5E9;">💰</div>
+          <div>
+            <div class="today-title" style="color:var(--ar);">Incoming วันนี้</div>
+            <div class="today-sub">รายการรับชำระวันนี้ (AR)</div>
+          </div>
+        </div>
+        <span class="today-badge" id="in-badge" style="background:#E8F5E9;color:#1B5E20;">0 รายการ</span>
+      </div>
+      <div class="today-summary">
+        <div class="today-stat">
+          <div class="ts-lbl">ยอดรวม (THB)</div>
+          <div class="ts-val" id="in-total" style="color:var(--ar);">—</div>
+          <div class="ts-sub">รับชำระวันนี้</div>
+        </div>
+        <div class="today-stat">
+          <div class="ts-lbl">จำนวนรายการ</div>
+          <div class="ts-val" id="in-count" style="color:var(--ap);">—</div>
+          <div class="ts-sub">เอกสาร</div>
+        </div>
+      </div>
+      <div class="today-list" id="in-list">
+        <div class="empty-today">กำลังโหลด...</div>
+      </div>
+    </div>
+  </div>
+
   <div id="alert-section" style="display:none; margin-bottom:20px;">
     <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px;">⏰ รายการครบกำหนดใน 7 วันข้างหน้า</div>
     <div class="alert-grid">
@@ -565,6 +669,7 @@ async function loadAll() {
 
   updateSummary();
   buildDashMonthOptions();
+  renderTodaySection();
   document.getElementById('last-update').textContent =
     `อัปเดต: ${new Date().toLocaleTimeString('th-TH')}`;
 }
@@ -840,15 +945,21 @@ function buildDashMonthOptions(){
     const d=g(r,ci.duedate)||g(r,co.duedate)||g(r,ca.duedate);
     if(d){const p=d.split('/');if(p.length>=3)months.add(p[1]+'/'+p[2]);}
   });
-  const sel=document.getElementById('dash-month-filter');
-  if(!sel)return;
-  sel.innerHTML='<option value="all" selected>ทั้งหมด</option>';
-  [...months].sort().reverse().slice(0,36).forEach(m=>{sel.innerHTML+=`<option value="${m}">${m}</option>`;});
+  const container=document.getElementById('dash-month-opts');
+  if(!container)return;
+  container.innerHTML=[...months].sort().reverse().slice(0,36).map(m=>
+    `<div class="dd-item"><input type="checkbox" class="dm-opt" data-val="${m}" checked onchange="syncDmAll()"> <span>${m}</span></div>`
+  ).join('');
+}
+function syncDmAll(){
+  const opts=[...document.querySelectorAll('.dm-opt')];
+  const allCb=document.getElementById('dm-all');
+  if(allCb) allCb.checked=opts.every(o=>o.checked);
 }
 function applyDashFilter(){
-  const sel=document.getElementById('dash-month-filter');
-  if(!sel)return;
-  const months=getSelectedMonth(sel);
+  const checkedOpts=[...document.querySelectorAll('.dm-opt:checked')];
+  const allOpts=[...document.querySelectorAll('.dm-opt')];
+  const months=checkedOpts.length===allOpts.length?[]:checkedOpts.map(o=>o.dataset.val);
   ['invoice','outgoing','ar'].forEach(type=>{
     const rows=document.querySelectorAll('#body-'+type+' tr');
     rows.forEach(tr=>{
@@ -864,8 +975,6 @@ function applyDashFilter(){
   });
 }
 function resetDashFilter(){
-  const sel=document.getElementById('dash-month-filter');
-  if(sel)[...sel.options].forEach(o=>o.selected=o.value==='all');
   ['invoice','outgoing','ar'].forEach(type=>{
     document.querySelectorAll('#body-'+type+' tr').forEach(tr=>tr.style.display='');
     const rows=document.querySelectorAll('#body-'+type+' tr').length;
@@ -927,6 +1036,10 @@ function renderArTable(){
     </tr>`;
   }).join('')||'<tr><td colspan="8" style="padding:20px;text-align:center;color:#6B7A8D;">ไม่มีรายการ</td></tr>';
 }
+
+document.addEventListener('click', e => {
+  if(!e.target.closest('.dd-wrap')) document.querySelectorAll('.dd-panel').forEach(p => p.style.display='none');
+});
 
 function closeReport(){
   document.getElementById('report-modal').style.display='none';
