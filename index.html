@@ -597,7 +597,15 @@ function buildTabDDOptions() {
     const months = new Set();
     dataMap[type].forEach(r => {
       const d = g(r, colMap[type]);
-      if(d){ const p=d.split('/'); if(p.length>=3) months.add(p[1]+'/'+p[2]); }
+      if(d){
+        const p=d.split('/');
+        if(p.length>=3){
+          let yr=parseInt(p[2]);
+          // แปลง พ.ศ. → ค.ศ. ถ้าจำเป็น (แสดงเป็น ค.ศ.)
+          if(yr>2400) yr=yr-543;
+          months.add(p[1]+'/'+yr);
+        }
+      }
     });
     const container = document.getElementById(optIds[type]);
     if(!container) return;
@@ -696,8 +704,13 @@ function updateSummary() {
   const outStatus = allData.outgoing.map(r => statusFromDays(parseInt(g(r, co.daysleft))));
   const apStatus  = [...invStatus, ...outStatus];
 
-  document.getElementById('ap-cnt-overdue').textContent = apStatus.filter(s => s === 'Overdue').length;
-  document.getElementById('ap-cnt-today').textContent   = apStatus.filter(s => s === 'Today').length;
+  document.getElementById('ap-cnt-overdue').textContent = apStatus.filter(s=>s==='Overdue').length.toLocaleString('th-TH');
+  document.getElementById('ap-cnt-today').textContent   = apStatus.filter(s=>s==='Today').length.toLocaleString('th-TH');
+
+  // AR status
+  const arStatus = allData.ar.map(r => g(r, ca.status));
+  document.getElementById('ar-cnt-overdue').textContent = arStatus.filter(s=>s==='Overdue').length.toLocaleString('th-TH');
+  document.getElementById('ar-cnt-today').textContent   = arStatus.filter(s=>s==='Today').length.toLocaleString('th-TH');
 
   const sumAP = allData.invoice.reduce((s,r)  => s+(parseFloat(g(r,ci.balance))||0), 0)
               + allData.outgoing.reduce((s,r) => s+(parseFloat(g(r,co.total))||0), 0);
@@ -707,25 +720,66 @@ function updateSummary() {
   document.getElementById('total-ar').textContent = sumAR.toLocaleString('th-TH',{maximumFractionDigits:0});
 
   // Alert 7 วัน — รวม Invoice + Outgoing
+  // คำนวณ DaysLeft จาก DueDate จริงๆ เพื่อความแม่นยำ
+  function calcDaysLeft(dueDateStr) {
+    const rd = parseDueDate(dueDateStr);
+    if(!rd) return null;
+    const now = new Date(); now.setHours(0,0,0,0);
+    return Math.round((rd - now) / 86400000);
+  }
+
+  const now7 = new Date(); now7.setHours(0,0,0,0);
   const alerts7inv = allData.invoice.filter(r => {
-    const d = parseInt(g(r,ci.daysleft)); return d >= 0 && d <= 7;
-  }).map(r => ({ days: parseInt(g(r,ci.daysleft)), name: g(r,ci.vendorname), due: g(r,ci.duedate), amt: g(r,ci.balance), cur: g(r,ci.currency) }));
+    const d = calcDaysLeft(g(r,ci.duedate));
+    return d !== null && d >= 0 && d <= 7;
+  }).map(r => {
+    const d = calcDaysLeft(g(r,ci.duedate));
+    return { days: d, name: g(r,ci.vendorname), due: g(r,ci.duedate), amt: g(r,ci.balance), cur: g(r,ci.currency)||'THB' };
+  });
 
   const alerts7out = allData.outgoing.filter(r => {
-    const d = parseInt(g(r,co.daysleft)); return d >= 0 && d <= 7;
-  }).map(r => ({ days: parseInt(g(r,co.daysleft)), name: g(r,co.vendorname), due: g(r,co.duedate), amt: g(r,co.total), cur: g(r,co.currency) }));
+    const d = calcDaysLeft(g(r,co.duedate));
+    return d !== null && d >= 0 && d <= 7;
+  }).map(r => {
+    const d = calcDaysLeft(g(r,co.duedate));
+    return { days: d, name: g(r,co.vendorname), due: g(r,co.duedate), amt: g(r,co.total), cur: g(r,co.currency)||'THB' };
+  });
 
-  const alerts7 = [...alerts7inv, ...alerts7out].sort((a,b) => a.days - b.days);
+  const alerts7ar = allData.ar.filter(r => {
+    const d = calcDaysLeft(g(r,ca.duedate));
+    return d !== null && d >= 0 && d <= 7;
+  }).map(r => {
+    const d = calcDaysLeft(g(r,ca.duedate));
+    return { days: d, name: g(r,ca.custname), due: g(r,ca.duedate), amt: g(r,ca.balance), cur: g(r,ca.currency)||'THB', isAR: true };
+  });
+
+  const alerts7 = [...alerts7inv, ...alerts7out, ...alerts7ar].sort((a,b) => a.days - b.days);
 
   if (alerts7.length > 0) {
     document.getElementById('alert-section').style.display = '';
-    document.getElementById('alert-list').innerHTML = alerts7.slice(0,10).map(a => `
-      <div class="alert-item">
-        <span class="days-left">${a.days===0?'วันนี้!':a.days+' วัน'}</span>
-        <span class="vendor">${a.name} <small style="color:var(--muted)">${a.due}</small></span>
-        <span class="amount">${fmtNum(a.amt)} ${a.cur}</span>
-      </div>`).join('');
   }
+
+  // แยก AP / AR
+  const apAlerts = alerts7.filter(a => !a.isAR);
+  const arAlerts = alerts7.filter(a => a.isAR);
+
+  document.getElementById('alert-list-ap').innerHTML = apAlerts.length === 0
+    ? '<div style="text-align:center;padding:12px;color:var(--muted);font-size:13px;">✅ ไม่มีรายการใน 7 วัน</div>'
+    : apAlerts.slice(0,10).map(a => `
+      <div class="alert-row">
+        <span class="a-days-ap">${a.days===0?'วันนี้!':a.days+' วัน'}</span>
+        <span class="a-name">${a.name}<span class="a-date">${a.due}</span></span>
+        <span class="a-amt-ap">${fmtNum(a.amt)}</span>
+      </div>`).join('');
+
+  document.getElementById('alert-list-ar').innerHTML = arAlerts.length === 0
+    ? '<div style="text-align:center;padding:12px;color:var(--muted);font-size:13px;">✅ ไม่มีรายการใน 7 วัน</div>'
+    : arAlerts.slice(0,10).map(a => `
+      <div class="alert-row">
+        <span class="a-days-ar">${a.days===0?'วันนี้!':a.days+' วัน'}</span>
+        <span class="a-name">${a.name}<span class="a-date">${a.due}</span></span>
+        <span class="a-amt-ar">${fmtNum(a.amt)}</span>
+      </div>`).join('');
 }
 
 function showTable(type) {
