@@ -591,6 +591,13 @@ function renderTodaySection() {
       </div>`).join('');
 }
 
+function extractMonthYear(d) {
+  if(!d) return '';
+  const sep = d.includes('.') ? '.' : '/';
+  const p = d.split(sep);
+  if(p.length < 3 || p[2].length !== 4) return '';
+  return p[1] + '/' + p[2];
+}
 function buildTabDDOptions() {
   const ci = COL.invoice, co = COL.outgoing, ca = COL.ar;
   const dataMap = { invoice: allData.invoice, outgoing: allData.outgoing, ar: allData.ar };
@@ -600,15 +607,8 @@ function buildTabDDOptions() {
   ['invoice','outgoing','ar'].forEach(type => {
     const months = new Set();
     dataMap[type].forEach(r => {
-      const d = g(r, colMap[type]);
-      if(d){
-        // รองรับทั้ง dd.MM.yyyy (จุด) และ dd/MM/yyyy (slash)
-        const sep = d.includes('.') ? '.' : '/';
-        const p = d.split(sep);
-        if(p.length>=3 && p[2].length===4){
-          months.add(p[1]+'/'+p[2]);
-        }
-      }
+      const m = extractMonthYear(g(r, colMap[type]));
+      if(m) months.add(m);
     });
     const container = document.getElementById(optIds[type]);
     if(!container) return;
@@ -646,7 +646,14 @@ function renderOutgoing(rows) {
     const ds = statusFromDays(parseInt(g(r,c.daysleft)));
     return `<tr data-status="${ds}" data-search="${(g(r,c.vendorname)+g(r,c.docnum)).toLowerCase()}">
       <td>${g(r,c.docnum)}</td><td>${g(r,c.docdate)}</td><td>${g(r,c.duedate)}</td>
-      ${daysCell(g(r,c.daysleft))}
+      ${(()=>{
+        const rd2=parseDueDate(g(r,c.duedate));
+        const now2=new Date();now2.setHours(0,0,0,0);
+        if(!rd2)return '<td>—</td>';
+        const diff=Math.round((rd2-now2)/86400000);
+        const col=diff<0?'color:#E53935;font-weight:600':diff===0?'color:#B45309;font-weight:700':'color:#2E7D32;';
+        return `<td style="${col}">${diff}</td>`;
+      })()}
       <td>${statusBadge(ds)}</td>
       <td>${g(r,c.vendorcode)}</td><td>${g(r,c.vendorname)}</td>
       <td class="amt">${fmtNum(g(r,c.total))}</td>
@@ -704,7 +711,15 @@ function updateSummary() {
 
   // Invoice ใช้ Status column / Outgoing คำนวณจาก DaysLeft
   const invStatus = allData.invoice.map(r => g(r, ci.status));
-  const outStatus = allData.outgoing.map(r => statusFromDays(parseInt(g(r, co.daysleft))));
+  const outStatus = allData.outgoing.map(r => {
+    const rd = parseDueDate(g(r,co.duedate));
+    const now2 = new Date(); now2.setHours(0,0,0,0);
+    if(!rd) return 'Upcoming';
+    const diff = Math.round((rd - now2)/86400000);
+    if(diff < 0) return 'Overdue';
+    if(diff === 0) return 'Today';
+    return 'Upcoming';
+  });
   const apStatus  = [...invStatus, ...outStatus];
 
   document.getElementById('ap-cnt-overdue').textContent = apStatus.filter(s=>s==='Overdue').length.toLocaleString('th-TH');
@@ -1028,7 +1043,7 @@ function openReport(){
   const allRptMonths = new Set();
   [...allData.invoice, ...allData.outgoing, ...allData.ar].forEach(r => {
     const d = g(r,ci.duedate)||g(r,co.duedate)||g(r,ca.duedate);
-    if(d){const p=d.split('/');if(p.length>=3)allRptMonths.add(p[1]+'/'+p[2]);}
+    const mR=extractMonthYear(d);if(mR)allRptMonths.add(mR);
   });
   const rptOpts = document.getElementById('rpt-month-opts');
   if(rptOpts) rptOpts.innerHTML = [...allRptMonths].sort().reverse().slice(0,36).map(m=>
@@ -1037,13 +1052,13 @@ function openReport(){
 
   // สร้าง month options สำหรับ AP table
   const apMonths=new Set();
-  allData.invoice.forEach(r=>{const d=g(r,ci.duedate);if(d){const p=d.split('/');if(p.length>=3)apMonths.add(p[1]+'/'+p[2]);}});
+  allData.invoice.forEach(r=>{const m=extractMonthYear(g(r,ci.duedate));if(m)apMonths.add(m);});
   const apMSel=document.getElementById('ap-month-sel');
   if(apMSel){apMSel.innerHTML='<option value="all" selected>ทั้งหมด</option>';
   [...apMonths].sort().reverse().slice(0,24).forEach(m=>{apMSel.innerHTML+=`<option value="${m}">${m}</option>`;});}
 
   const arMonths=new Set();
-  allData.ar.forEach(r=>{const d=g(r,ca.duedate);if(d){const p=d.split('/');if(p.length>=3)arMonths.add(p[1]+'/'+p[2]);}});
+  allData.ar.forEach(r=>{const m=extractMonthYear(g(r,ca.duedate));if(m)arMonths.add(m);});
   const arMSel=document.getElementById('ar-month-sel');
   if(arMSel){arMSel.innerHTML='<option value="all" selected>ทั้งหมด</option>';
   [...arMonths].sort().reverse().slice(0,24).forEach(m=>{arMSel.innerHTML+=`<option value="${m}">${m}</option>`;});}
@@ -1133,7 +1148,7 @@ function buildDashMonthOptions(){
   const months=new Set();
   [...allData.invoice,...allData.outgoing,...allData.ar].forEach(r=>{
     const d=g(r,ci.duedate)||g(r,co.duedate)||g(r,ca.duedate);
-    if(d){const p=d.split('/');if(p.length>=3)months.add(p[1]+'/'+p[2]);}
+    const mOld=extractMonthYear(d);if(mOld)months.add(mOld);
   });
   const container=document.getElementById('dash-month-opts');
   if(!container)return;
@@ -1155,7 +1170,7 @@ function applyDashFilter(){
     rows.forEach(tr=>{
       if(!months.length){tr.style.display='';return;}
       const due=(tr.querySelector('td:nth-child(3)')||{}).textContent||'';
-      const p=due.split('/');
+      const mDue=extractMonthYear(due); const p=['','',''];
       const m=p.length>=3?p[1]+'/'+p[2]:'';
       tr.style.display=months.includes(m)?'':'none';
     });
@@ -1184,7 +1199,7 @@ function renderApTable(){
   const selM=getSelectedMonth(document.getElementById('ap-month-sel'));
   const selS=getCheckedStatus('ap-st');
   let rows=allData.invoice.sort((a,b)=>(parseInt(g(a,ci.daysleft))||0)-(parseInt(g(b,ci.daysleft))||0));
-  if(selM.length)rows=rows.filter(r=>{const d=g(r,ci.duedate);if(!d)return false;const p=d.split('/');return selM.some(m=>m===p[1]+'/'+p[2]);});
+  if(selM.length)rows=rows.filter(r=>selM.some(m=>m===extractMonthYear(g(r,ci.duedate))));
   if(selS.length)rows=rows.filter(r=>selS.includes(g(r,ci.status)));
   const sumB=rows.reduce((s,r)=>s+(parseFloat(g(r,ci.balance))||0),0)||1;
   document.getElementById('rpt-ap-body').innerHTML=rows.slice(0,100).map((r,i)=>{
@@ -1208,7 +1223,7 @@ function renderArTable(){
   const selM=getSelectedMonth(document.getElementById('ar-month-sel'));
   const selS=getCheckedStatus('ar-st');
   let rows=allData.ar.sort((a,b)=>(parseInt(g(a,ca.daysleft))||0)-(parseInt(g(b,ca.daysleft))||0));
-  if(selM.length)rows=rows.filter(r=>{const d=g(r,ca.duedate);if(!d)return false;const p=d.split('/');return selM.some(m=>m===p[1]+'/'+p[2]);});
+  if(selM.length)rows=rows.filter(r=>selM.some(m=>m===extractMonthYear(g(r,ca.duedate))));
   if(selS.length)rows=rows.filter(r=>selS.includes(g(r,ca.status)));
   const sumB=rows.reduce((s,r)=>s+(parseFloat(g(r,ca.balance))||0),0)||1;
   document.getElementById('rpt-ar-body').innerHTML=rows.slice(0,100).map((r,i)=>{
@@ -1243,26 +1258,7 @@ function tabDDToggleAll(cls, allId) {
   document.querySelectorAll('.' + cls).forEach(b => b.checked = cb.checked);
 }
 
-function buildTabDDOptions() {
-  const ci = COL.invoice, co = COL.outgoing, ca = COL.ar;
-  const colMap = { invoice: ci.duedate, outgoing: co.duedate, ar: ca.duedate };
-  const dataMap = { invoice: allData.invoice, outgoing: allData.outgoing, ar: allData.ar };
-  const optIds = { invoice: 'invoice-dd-opts', outgoing: 'outgoing-dd-opts', ar: 'ar-dd-opts' };
-  const clsMap = { invoice: 'inv-mo', outgoing: 'out-mo', ar: 'ar-mo' };
 
-  ['invoice','outgoing','ar'].forEach(type => {
-    const months = new Set();
-    dataMap[type].forEach(r => {
-      const d = g(r, colMap[type]);
-      if(d) { const p = d.split('/'); if(p.length >= 3) months.add(p[1]+'/'+p[2]); }
-    });
-    const container = document.getElementById(optIds[type]);
-    if(!container) return;
-    container.innerHTML = [...months].sort().reverse().slice(0,36).map(m =>
-      `<div class="dd-item"><input type="checkbox" class="${clsMap[type]}" data-val="${m}" checked> <span>${m}</span></div>`
-    ).join('');
-  });
-}
 
 function applyTabDD(type, lblId, cls, prefix, ddId) {
   const opts = [...document.querySelectorAll('.'+cls)];
@@ -1295,8 +1291,7 @@ function filterByDueDate(type, months) {
     const due = tr.querySelector('td:nth-child(3)');
     const dueText = due ? due.textContent.trim() : '';
     const sep = dueText.includes('.') ? '.' : '/';
-    const p = dueText.split(sep);
-    const m = p.length >= 3 ? p[1]+'/'+p[2] : '';
+    const m = extractMonthYear(dueText);
     const show = months.includes(m);
     tr.style.display = show ? '' : 'none';
     if(show) visible++;
