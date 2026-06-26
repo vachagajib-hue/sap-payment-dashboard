@@ -774,6 +774,15 @@ async function loadAll() {
     `อัปเดต: ${new Date().toLocaleTimeString('th-TH')}`;
 }
 
+function gotoTabScroll(tabName, status) {
+  switchTab(tabName);
+  filterStatus(tabName, status);
+  setTimeout(() => {
+    const tabEl = document.querySelector('.tabs');
+    if(tabEl) tabEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 150);
+}
+
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach((t,i) => {
     t.classList.toggle('active', ['invoice','outgoing','ar'][i]===name);
