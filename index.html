@@ -81,7 +81,7 @@
   /* KPI Section */
   .kpi-section { margin-bottom: 18px; }
   .kpi-section-hd { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 14px; font-weight: 700; color: var(--muted); letter-spacing: 0.4px; text-transform: uppercase; }
-  .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
   .kpi-card { background: var(--surface); border-radius: 12px; border: 1px solid var(--border); padding: 20px 22px 15px; box-shadow: 0 1px 6px rgba(0,0,0,0.06); }
   .kpi-card.ap-card { border-top: 5px solid var(--ap); }
   .kpi-card.ar-card { border-top: 5px solid var(--ar); }
@@ -154,7 +154,7 @@
   .btn-apply-dd { background: var(--ap); color: #fff; border: none; padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; font-family: 'Sarabun', sans-serif; }
   .btn-reset-dd { background: var(--surface); color: var(--muted); border: 1px solid var(--border); padding: 7px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: 'Sarabun', sans-serif; }
   @media (max-width: 640px) {
-    .kpi-grid { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: repeat(2,1fr); }
     .alert-grid { grid-template-columns: 1fr; }
     .today-grid { grid-template-columns: 1fr; }
     .search-box { width: 100%; }
@@ -188,7 +188,7 @@
       <div class="kpi-card ap-card">
         <div class="kpi-lbl">เกินกำหนดชำระ</div>
         <div class="kpi-val c-red" id="ap-cnt-overdue">—</div>
-        <div class="kpi-sub">รายการ</div>
+        <div class="kpi-sub" id="ap-pct-overdue">รายการ</div>
         <div class="kpi-foot">
           <span class="kpi-tag tag-red">เร่งด่วน</span>
           <button class="det-btn" onclick="gotoTabScroll('invoice','Overdue')">รายละเอียด ↗</button>
@@ -197,10 +197,19 @@
       <div class="kpi-card ap-card">
         <div class="kpi-lbl">ครบกำหนดวันนี้</div>
         <div class="kpi-val c-yellow" id="ap-cnt-today">—</div>
-        <div class="kpi-sub">รายการ</div>
+        <div class="kpi-sub" id="ap-pct-today">รายการ</div>
         <div class="kpi-foot">
           <span class="kpi-tag tag-yellow">ดำเนินการด่วน</span>
           <button class="det-btn" onclick="gotoTabScroll('invoice','Today')">รายละเอียด ↗</button>
+        </div>
+      </div>
+      <div class="kpi-card ap-card">
+        <div class="kpi-lbl">ยังไม่ถึงกำหนดชำระ</div>
+        <div class="kpi-val c-green" id="ap-cnt-upcoming">—</div>
+        <div class="kpi-sub" id="ap-pct-upcoming">รายการ</div>
+        <div class="kpi-foot">
+          <span class="kpi-tag tag-green">ยังไม่ถึง</span>
+          <button class="det-btn" onclick="gotoTabScroll('invoice','Upcoming')">รายละเอียด ↗</button>
         </div>
       </div>
       <div class="kpi-card ap-card">
@@ -222,7 +231,7 @@
       <div class="kpi-card ar-card">
         <div class="kpi-lbl">เกินกำหนดรับชำระ</div>
         <div class="kpi-val c-red" id="ar-cnt-overdue">—</div>
-        <div class="kpi-sub">รายการ</div>
+        <div class="kpi-sub" id="ar-pct-overdue">รายการ</div>
         <div class="kpi-foot">
           <span class="kpi-tag tag-red">ติดตามด่วน</span>
           <button class="det-btn" onclick="gotoTabScroll('ar','Overdue')">รายละเอียด ↗</button>
@@ -231,10 +240,19 @@
       <div class="kpi-card ar-card">
         <div class="kpi-lbl">ครบกำหนดวันนี้</div>
         <div class="kpi-val c-yellow" id="ar-cnt-today">—</div>
-        <div class="kpi-sub">รายการ</div>
+        <div class="kpi-sub" id="ar-pct-today">รายการ</div>
         <div class="kpi-foot">
           <span class="kpi-tag tag-yellow">ติดตามลูกค้า</span>
           <button class="det-btn" onclick="gotoTabScroll('ar','Today')">รายละเอียด ↗</button>
+        </div>
+      </div>
+      <div class="kpi-card ar-card">
+        <div class="kpi-lbl">ยังไม่ถึงกำหนดรับ</div>
+        <div class="kpi-val c-green" id="ar-cnt-upcoming">—</div>
+        <div class="kpi-sub" id="ar-pct-upcoming">รายการ</div>
+        <div class="kpi-foot">
+          <span class="kpi-tag tag-green">ยังไม่ถึง</span>
+          <button class="det-btn" onclick="gotoTabScroll('ar','Upcoming')">รายละเอียด ↗</button>
         </div>
       </div>
       <div class="kpi-card ar-card">
@@ -612,7 +630,11 @@ function buildTabDDOptions() {
     });
     const container = document.getElementById(optIds[type]);
     if(!container) return;
-    container.innerHTML = [...months].sort().reverse().slice(0,36).map(m =>
+    container.innerHTML = [...months].sort((a,b)=>{
+      const [ma,ya]=[parseInt(a),parseInt(a.split('/')[1])];
+      const [mb,yb]=[parseInt(b),parseInt(b.split('/')[1])];
+      return ya!==yb ? ya-yb : ma-mb;
+    }).slice(0,60).map(m =>
       `<div class="dd-item"><input type="checkbox" class="${clsMap[type]}" data-val="${m}" checked> <span>${m}</span></div>`
     ).join('');
   });
@@ -722,13 +744,31 @@ function updateSummary() {
   });
   const apStatus  = [...invStatus, ...outStatus];
 
-  document.getElementById('ap-cnt-overdue').textContent = apStatus.filter(s=>s==='Overdue').length.toLocaleString('th-TH');
-  document.getElementById('ap-cnt-today').textContent   = apStatus.filter(s=>s==='Today').length.toLocaleString('th-TH');
+  const apOv = apStatus.filter(s=>s==='Overdue').length;
+  const apTd = apStatus.filter(s=>s==='Today').length;
+  const apUp = apStatus.filter(s=>s==='Upcoming').length;
+  const apTotal = apStatus.length || 1;
+
+  document.getElementById('ap-cnt-overdue').textContent  = apOv.toLocaleString('th-TH');
+  document.getElementById('ap-pct-overdue').textContent   = `รายการ (${(apOv/apTotal*100).toFixed(1)}%)`;
+  document.getElementById('ap-cnt-today').textContent    = apTd.toLocaleString('th-TH');
+  document.getElementById('ap-cnt-upcoming').textContent = apUp.toLocaleString('th-TH');
+  document.getElementById('ap-pct-today').textContent    = `รายการ (${(apTd/apTotal*100).toFixed(1)}%)`;
+  document.getElementById('ap-pct-upcoming').textContent = `รายการ (${(apUp/apTotal*100).toFixed(1)}%)`;
 
   // AR status
   const arStatus = allData.ar.map(r => g(r, ca.status));
-  document.getElementById('ar-cnt-overdue').textContent = arStatus.filter(s=>s==='Overdue').length.toLocaleString('th-TH');
-  document.getElementById('ar-cnt-today').textContent   = arStatus.filter(s=>s==='Today').length.toLocaleString('th-TH');
+  const arOv = arStatus.filter(s=>s==='Overdue').length;
+  const arTd = arStatus.filter(s=>s==='Today').length;
+  const arUp = arStatus.filter(s=>s==='Upcoming').length;
+  const arTotal = arStatus.length || 1;
+
+  document.getElementById('ar-cnt-overdue').textContent  = arOv.toLocaleString('th-TH');
+  document.getElementById('ar-pct-overdue').textContent   = `รายการ (${(arOv/arTotal*100).toFixed(1)}%)`;
+  document.getElementById('ar-cnt-today').textContent    = arTd.toLocaleString('th-TH');
+  document.getElementById('ar-cnt-upcoming').textContent = arUp.toLocaleString('th-TH');
+  document.getElementById('ar-pct-today').textContent    = `รายการ (${(arTd/arTotal*100).toFixed(1)}%)`;
+  document.getElementById('ar-pct-upcoming').textContent = `รายการ (${(arUp/arTotal*100).toFixed(1)}%)`;
 
   const sumAP = allData.invoice.reduce((s,r)  => s+(parseFloat(g(r,ci.balance))||0), 0)
               + allData.outgoing.reduce((s,r) => s+(parseFloat(g(r,co.total))||0), 0);
