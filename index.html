@@ -612,11 +612,16 @@ function renderTodaySection() {
 }
 
 function extractMonthYear(d) {
-  if(!d) return '';
+  if(!d || typeof d !== 'string') return '';
+  // รองรับ dd.MM.yyyy และ dd/MM/yyyy
   const sep = d.includes('.') ? '.' : '/';
-  const p = d.split(sep);
-  if(p.length < 3 || p[2].length !== 4) return '';
-  return p[1] + '/' + p[2];
+  const p = d.trim().split(sep);
+  if(p.length < 3) return '';
+  const yr = p[2].trim();
+  const mo = p[1].trim().padStart(2,'0');
+  // ปีต้องเป็น 4 หลัก
+  if(yr.length !== 4 || isNaN(parseInt(yr))) return '';
+  return mo + '/' + yr;
 }
 function buildTabDDOptions() {
   const ci = COL.invoice, co = COL.outgoing, ca = COL.ar;
@@ -633,8 +638,9 @@ function buildTabDDOptions() {
     const container = document.getElementById(optIds[type]);
     if(!container) return;
     container.innerHTML = [...months].sort((a,b)=>{
-      const [ma,ya]=[parseInt(a),parseInt(a.split('/')[1])];
-      const [mb,yb]=[parseInt(b),parseInt(b.split('/')[1])];
+      const pa=a.split('/'), pb=b.split('/');
+      const ya=parseInt(pa[1]||0), yb=parseInt(pb[1]||0);
+      const ma=parseInt(pa[0]||0), mb=parseInt(pb[0]||0);
       return ya!==yb ? ya-yb : ma-mb;
     }).map(m =>
       `<div class="dd-item"><input type="checkbox" class="${clsMap[type]}" data-val="${m}" checked> <span>${m}</span></div>`
