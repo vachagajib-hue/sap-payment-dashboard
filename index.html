@@ -473,9 +473,8 @@ function updateSummary() {
   const outStatus  = allData.outgoing.map(r => statusFromDays(parseInt(g(r, co.daysleft))));
   const allStatus  = [...invStatus, ...outStatus];
 
-  document.getElementById('cnt-overdue').textContent  = allStatus.filter(s => s === 'Overdue').length;
-  document.getElementById('cnt-today').textContent    = allStatus.filter(s => s === 'Today').length;
-  document.getElementById('cnt-upcoming').textContent = allStatus.filter(s => s === 'Upcoming').length;
+  document.getElementById('ap-cnt-overdue').textContent = apStatus.filter(s => s === 'Overdue').length;
+  document.getElementById('ap-cnt-today').textContent   = apStatus.filter(s => s === 'Today').length;
 
   const sumAP = allData.invoice.reduce((s,r)  => s+(parseFloat(g(r,ci.balance))||0), 0)
               + allData.outgoing.reduce((s,r) => s+(parseFloat(g(r,co.total))||0), 0);
