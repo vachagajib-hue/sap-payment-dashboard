@@ -82,20 +82,20 @@
   .kpi-section { margin-bottom: 18px; }
   .kpi-section-hd { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 14px; font-weight: 700; color: var(--muted); letter-spacing: 0.4px; text-transform: uppercase; }
   .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-  .kpi-card { background: var(--surface); border-radius: 14px; border: 1px solid var(--border); padding: 26px 28px 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+  .kpi-card { background: var(--surface); border-radius: 12px; border: 1px solid var(--border); padding: 18px 20px 13px; box-shadow: 0 1px 6px rgba(0,0,0,0.06); }
   .kpi-card.ap-card { border-top: 5px solid var(--ap); }
   .kpi-card.ar-card { border-top: 5px solid var(--ar); }
-  .kpi-lbl { font-size: 15px; font-weight: 600; color: var(--muted); margin-bottom: 14px; }
-  .kpi-val { font-size: 48px; font-weight: 700; line-height: 1; }
-  .kpi-val-amt { font-size: 32px; font-weight: 700; line-height: 1; }
-  .kpi-sub { font-size: 14px; color: var(--muted); margin-top: 8px; }
-  .kpi-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); }
-  .kpi-tag { font-size: 13px; padding: 5px 14px; border-radius: 20px; font-weight: 600; }
+  .kpi-lbl { font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 10px; }
+  .kpi-val { font-size: 38px; font-weight: 700; line-height: 1; }
+  .kpi-val-amt { font-size: 26px; font-weight: 700; line-height: 1; }
+  .kpi-sub { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .kpi-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 11px; border-top: 1px solid var(--border); }
+  .kpi-tag { font-size: 12px; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
   .tag-red { background: var(--overdue-bg); color: var(--overdue); }
   .tag-yellow { background: var(--today-bg); color: #B45309; }
   .tag-blue { background: var(--ap-bg); color: var(--ap); }
   .tag-green { background: var(--ar-bg); color: var(--ar); }
-  .det-btn { font-size: 13px; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: transparent; cursor: pointer; color: var(--muted); font-family: 'Sarabun', sans-serif; transition: background 0.15s; }
+  .det-btn { font-size: 12px; padding: 5px 13px; border-radius: 20px; border: 1px solid var(--border); background: transparent; cursor: pointer; color: var(--muted); font-family: 'Sarabun', sans-serif; transition: background 0.15s; }
   .det-btn:hover { background: var(--bg); }
   .c-red { color: var(--overdue); } .c-yellow { color: var(--today); } .c-blue { color: var(--ap); } .c-green { color: var(--ar); }
   /* Alert แยก AP/AR */
@@ -191,7 +191,7 @@
         <div class="kpi-sub">รายการ</div>
         <div class="kpi-foot">
           <span class="kpi-tag tag-red">เร่งด่วน</span>
-          <button class="det-btn" onclick="gotoTab('invoice','Overdue')">รายละเอียด ↗</button>
+          <button class="det-btn" onclick="gotoTabScroll('invoice','Overdue')">รายละเอียด ↗</button>
         </div>
       </div>
       <div class="kpi-card ap-card">
@@ -200,16 +200,16 @@
         <div class="kpi-sub">รายการ</div>
         <div class="kpi-foot">
           <span class="kpi-tag tag-yellow">ดำเนินการด่วน</span>
-          <button class="det-btn" onclick="gotoTab('invoice','Today')">รายละเอียด ↗</button>
+          <button class="det-btn" onclick="gotoTabScroll('invoice','Today')">รายละเอียด ↗</button>
         </div>
       </div>
       <div class="kpi-card ap-card">
         <div class="kpi-lbl">ยอดค้างจ่ายรวม (THB)</div>
-        <div class="kpi-val c-blue" id="total-ap" class="kpi-val-amt c-blue">—</div>
+        <div class="kpi-val-amt c-blue" id="total-ap">—</div>
         <div class="kpi-sub">Invoice + Outgoing</div>
         <div class="kpi-foot">
           <span class="kpi-tag tag-blue">AP รวม</span>
-          <button class="det-btn" onclick="gotoTab('invoice','all')">รายละเอียด ↗</button>
+          <button class="det-btn" onclick="gotoTabScroll('invoice','all')">รายละเอียด ↗</button>
         </div>
       </div>
     </div>
@@ -225,7 +225,7 @@
         <div class="kpi-sub">รายการ</div>
         <div class="kpi-foot">
           <span class="kpi-tag tag-red">ติดตามด่วน</span>
-          <button class="det-btn" onclick="gotoTab('ar','Overdue')">รายละเอียด ↗</button>
+          <button class="det-btn" onclick="gotoTabScroll('ar','Overdue')">รายละเอียด ↗</button>
         </div>
       </div>
       <div class="kpi-card ar-card">
@@ -234,41 +234,22 @@
         <div class="kpi-sub">รายการ</div>
         <div class="kpi-foot">
           <span class="kpi-tag tag-yellow">ติดตามลูกค้า</span>
-          <button class="det-btn" onclick="gotoTab('ar','Today')">รายละเอียด ↗</button>
+          <button class="det-btn" onclick="gotoTabScroll('ar','Today')">รายละเอียด ↗</button>
         </div>
       </div>
       <div class="kpi-card ar-card">
         <div class="kpi-lbl">ยอดค้างรับรวม (THB)</div>
-        <div class="kpi-val c-green" id="total-ar" class="kpi-val-amt c-green">—</div>
+        <div class="kpi-val-amt c-green" id="total-ar">—</div>
         <div class="kpi-sub">AR Invoice</div>
         <div class="kpi-foot">
           <span class="kpi-tag tag-green">AR รวม</span>
-          <button class="det-btn" onclick="gotoTab('ar','all')">รายละเอียด ↗</button>
+          <button class="det-btn" onclick="gotoTabScroll('ar','all')">รายละเอียด ↗</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Filter วันครบกำหนดจ่าย — Dropdown ซ่อน -->
-  <div style="background:var(--surface);border-radius:10px;border:1px solid var(--border);padding:12px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-    <span style="font-size:14px;font-weight:600;color:var(--muted);">📅 วันครบกำหนดจ่าย</span>
-    <div class="dd-wrap">
-      <button class="dd-btn" onclick="toggleDashDD()">
-        <span id="dash-dd-label">ทั้งหมด</span>
-        <span style="font-size:12px;color:var(--muted);">▾</span>
-      </button>
-      <div class="dd-panel" id="dash-dd" style="display:none;">
-        <div class="dd-item"><input type="checkbox" id="dm-all" checked onchange="dashToggleAll(this)"> <label for="dm-all" style="cursor:pointer;">ทั้งหมด</label></div>
-        <div class="dd-sep"></div>
-        <div id="dash-month-opts"></div>
-        <div class="dd-footer">
-          <button class="btn-apply-dd" onclick="applyDashDD()">นำไปใช้</button>
-          <button class="btn-reset-dd" onclick="resetDashDD()">รีเซ็ต</button>
-        </div>
-      </div>
-    </div>
-    <span style="font-size:12px;color:var(--muted);">เลือกได้หลายเดือน</span>
-  </div>
+
 
   <!-- Alert 7 วัน แยก AP/AR -->
   <!-- รายการวันนี้ -->
@@ -360,6 +341,21 @@
         <button class="filter-btn" onclick="filterStatus('invoice','Overdue')">🔴 เกิน</button>
         <button class="filter-btn" onclick="filterStatus('invoice','Today')">🟡 วันนี้</button>
         <button class="filter-btn" onclick="filterStatus('invoice','Upcoming')">🟢 ยังไม่ถึง</button>
+        <div class="dd-wrap" style="margin-left:4px;">
+          <button class="dd-btn" style="min-width:175px;padding:6px 11px;font-size:12px;" onclick="toggleTabDD('invoice-dd')">
+            <span id="invoice-dd-lbl">📅 วันครบกำหนดจ่าย</span>
+            <span style="font-size:11px;color:var(--muted);">▾</span>
+          </button>
+          <div class="dd-panel" id="invoice-dd" style="display:none;">
+            <div class="dd-item"><input type="checkbox" id="inv-all2" checked onchange="tabDDToggleAll('inv-mo','inv-all2')"> <label for="inv-all2" style="cursor:pointer;">ทั้งหมด</label></div>
+            <div class="dd-sep"></div>
+            <div id="invoice-dd-opts"></div>
+            <div class="dd-footer">
+              <button class="btn-apply-dd" onclick="applyTabDD('invoice','invoice-dd-lbl','inv-mo','วันครบกำหนดจ่าย','invoice-dd')">นำไปใช้</button>
+              <button class="btn-reset-dd" onclick="resetTabDD('invoice','inv-mo','inv-all2','invoice-dd-lbl','📅 วันครบกำหนดจ่าย','invoice-dd')">รีเซ็ต</button>
+            </div>
+          </div>
+        </div>
         <span class="record-count" id="count-invoice">—</span>
       </div>
       <div class="table-wrap">
@@ -387,6 +383,21 @@
         <button class="filter-btn" onclick="filterStatus('outgoing','Overdue')">🔴 เกิน</button>
         <button class="filter-btn" onclick="filterStatus('outgoing','Today')">🟡 วันนี้</button>
         <button class="filter-btn" onclick="filterStatus('outgoing','Upcoming')">🟢 ยังไม่ถึง</button>
+        <div class="dd-wrap" style="margin-left:4px;">
+          <button class="dd-btn" style="min-width:175px;padding:6px 11px;font-size:12px;" onclick="toggleTabDD('outgoing-dd')">
+            <span id="outgoing-dd-lbl">📅 วันครบกำหนดจ่าย</span>
+            <span style="font-size:11px;color:var(--muted);">▾</span>
+          </button>
+          <div class="dd-panel" id="outgoing-dd" style="display:none;">
+            <div class="dd-item"><input type="checkbox" id="out-all2" checked onchange="tabDDToggleAll('out-mo','out-all2')"> <label for="out-all2" style="cursor:pointer;">ทั้งหมด</label></div>
+            <div class="dd-sep"></div>
+            <div id="outgoing-dd-opts"></div>
+            <div class="dd-footer">
+              <button class="btn-apply-dd" onclick="applyTabDD('outgoing','outgoing-dd-lbl','out-mo','วันครบกำหนดจ่าย','outgoing-dd')">นำไปใช้</button>
+              <button class="btn-reset-dd" onclick="resetTabDD('outgoing','out-mo','out-all2','outgoing-dd-lbl','📅 วันครบกำหนดจ่าย','outgoing-dd')">รีเซ็ต</button>
+            </div>
+          </div>
+        </div>
         <span class="record-count" id="count-outgoing">—</span>
       </div>
       <div class="table-wrap">
@@ -413,6 +424,21 @@
         <button class="filter-btn" onclick="filterStatus('ar','Overdue')">🔴 เกิน</button>
         <button class="filter-btn" onclick="filterStatus('ar','Today')">🟡 วันนี้</button>
         <button class="filter-btn" onclick="filterStatus('ar','Upcoming')">🟢 ยังไม่ถึง</button>
+        <div class="dd-wrap" style="margin-left:4px;">
+          <button class="dd-btn" style="min-width:175px;padding:6px 11px;font-size:12px;" onclick="toggleTabDD('ar-dd')">
+            <span id="ar-dd-lbl">📅 วันครบกำหนดรับ</span>
+            <span style="font-size:11px;color:var(--muted);">▾</span>
+          </button>
+          <div class="dd-panel" id="ar-dd" style="display:none;">
+            <div class="dd-item"><input type="checkbox" id="ar-all2" checked onchange="tabDDToggleAll('ar-mo','ar-all2')"> <label for="ar-all2" style="cursor:pointer;">ทั้งหมด</label></div>
+            <div class="dd-sep"></div>
+            <div id="ar-dd-opts"></div>
+            <div class="dd-footer">
+              <button class="btn-apply-dd" onclick="applyTabDD('ar','ar-dd-lbl','ar-mo','วันครบกำหนดรับ','ar-dd')">นำไปใช้</button>
+              <button class="btn-reset-dd" onclick="resetTabDD('ar','ar-mo','ar-all2','ar-dd-lbl','📅 วันครบกำหนดรับ','ar-dd')">รีเซ็ต</button>
+            </div>
+          </div>
+        </div>
         <span class="record-count" id="count-ar">—</span>
       </div>
       <div class="table-wrap">
@@ -505,6 +531,80 @@ function daysCell(val) {
   const n = parseInt(val);
   if (isNaN(n)) return '<td>—</td>';
   return `<td class="${n<0?'red':''}" ${n>=0&&n<=7?'style="color:#B45309;font-weight:700"':''}>${n}</td>`;
+}
+
+function parseDueDate(d) {
+  if(!d) return null;
+  const p = d.split('/');
+  if(p.length < 3) return null;
+  let yr = parseInt(p[2]);
+  if(yr > 2400) yr = yr - 543;
+  return new Date(yr, parseInt(p[1])-1, parseInt(p[0]));
+}
+
+function renderTodaySection() {
+  const co = COL.outgoing, ca = COL.ar;
+  const now = new Date(); now.setHours(0,0,0,0);
+
+  const todayOut = allData.outgoing.filter(r => {
+    const rd = parseDueDate(g(r, co.duedate));
+    return rd && rd.getTime() === now.getTime();
+  });
+  const sumOut = todayOut.reduce((s,r) => s+(parseFloat(g(r,co.total))||0), 0);
+  const outBadge = document.getElementById('out-badge');
+  const outTotal = document.getElementById('out-total');
+  const outCount = document.getElementById('out-count');
+  const outList  = document.getElementById('out-list');
+  if(outBadge) outBadge.textContent = todayOut.length + ' รายการ';
+  if(outTotal) outTotal.textContent = sumOut.toLocaleString('th-TH',{maximumFractionDigits:0});
+  if(outCount) outCount.textContent = todayOut.length;
+  if(outList)  outList.innerHTML = todayOut.length === 0
+    ? '<div class="empty-today">ไม่มีรายการ Outgoing วันนี้</div>'
+    : todayOut.slice(0,20).map(r => `<div class="today-row">
+        <span class="tr-num">${g(r,co.docnum)}</span>
+        <span class="tr-name">${g(r,co.vendorname)}</span>
+        <span class="tr-amt-out">${fmtNum(g(r,co.total))}</span>
+      </div>`).join('');
+
+  const todayIn = allData.ar.filter(r => {
+    const rd = parseDueDate(g(r, ca.duedate));
+    return rd && rd.getTime() === now.getTime();
+  });
+  const sumIn = todayIn.reduce((s,r) => s+(parseFloat(g(r,ca.balance))||0), 0);
+  const inBadge = document.getElementById('in-badge');
+  const inTotal  = document.getElementById('in-total');
+  const inCount  = document.getElementById('in-count');
+  const inList   = document.getElementById('in-list');
+  if(inBadge) inBadge.textContent = todayIn.length + ' รายการ';
+  if(inTotal)  inTotal.textContent  = sumIn.toLocaleString('th-TH',{maximumFractionDigits:0});
+  if(inCount)  inCount.textContent  = todayIn.length;
+  if(inList)   inList.innerHTML = todayIn.length === 0
+    ? '<div class="empty-today">ไม่มีรายการ Incoming วันนี้</div>'
+    : todayIn.slice(0,20).map(r => `<div class="today-row">
+        <span class="tr-num">${g(r,ca.docnum)}</span>
+        <span class="tr-name">${g(r,ca.custname)}</span>
+        <span class="tr-amt-in">${fmtNum(g(r,ca.balance))}</span>
+      </div>`).join('');
+}
+
+function buildTabDDOptions() {
+  const ci = COL.invoice, co = COL.outgoing, ca = COL.ar;
+  const dataMap = { invoice: allData.invoice, outgoing: allData.outgoing, ar: allData.ar };
+  const colMap  = { invoice: ci.duedate, outgoing: co.duedate, ar: ca.duedate };
+  const optIds  = { invoice: 'invoice-dd-opts', outgoing: 'outgoing-dd-opts', ar: 'ar-dd-opts' };
+  const clsMap  = { invoice: 'inv-mo', outgoing: 'out-mo', ar: 'ar-mo' };
+  ['invoice','outgoing','ar'].forEach(type => {
+    const months = new Set();
+    dataMap[type].forEach(r => {
+      const d = g(r, colMap[type]);
+      if(d){ const p=d.split('/'); if(p.length>=3) months.add(p[1]+'/'+p[2]); }
+    });
+    const container = document.getElementById(optIds[type]);
+    if(!container) return;
+    container.innerHTML = [...months].sort().reverse().slice(0,36).map(m =>
+      `<div class="dd-item"><input type="checkbox" class="${clsMap[type]}" data-val="${m}" checked> <span>${m}</span></div>`
+    ).join('');
+  });
 }
 
 function renderInvoice(rows) {
@@ -668,7 +768,7 @@ async function loadAll() {
   } else { showError('ar', ar.reason?.message||'ไม่มีข้อมูล'); }
 
   updateSummary();
-  buildDashMonthOptions();
+  buildTabDDOptions();
   renderTodaySection();
   document.getElementById('last-update').textContent =
     `อัปเดต: ${new Date().toLocaleTimeString('th-TH')}`;
@@ -701,13 +801,25 @@ loadAll();
       </div>
     </div>
 
-    <!-- Filter Bar -->
-    <div style="background:#fff;border-bottom:1px solid #E2E6EA;padding:10px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-      <span style="font-size:13px;color:#6B7A8D;font-weight:500;">📅 เดือน</span>
-      <select id="rpt-month-filter" style="padding:6px 12px;border:1px solid #E2E6EA;border-radius:6px;font-size:13px;font-family:'Sarabun',sans-serif;background:#fff;color:#1A2333;" onchange="renderReport()">
-        <option value="all">ทั้งหมด</option>
-      </select>
-      <span style="font-size:11px;color:#6B7A8D;">* แสดงรายการค้างชำระทั้งหมด ณ เดือนที่เลือก</span>
+    <!-- Filter Bar — Dropdown ซ่อน -->
+    <div style="background:#fff;border-bottom:1px solid #E2E6EA;padding:9px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <span style="font-size:13px;font-weight:600;color:#6B7A8D;"><i class="ti ti-calendar" aria-hidden="true" style="font-size:15px;vertical-align:-2px;margin-right:4px;"></i> วันครบกำหนด</span>
+      <div class="dd-wrap">
+        <button class="dd-btn" style="min-width:155px;padding:7px 12px;font-size:13px;" onclick="toggleRptDD()">
+          <span id="rpt-dd-lbl">ทั้งหมด</span>
+          <span style="font-size:11px;color:#6B7A8D;">▾</span>
+        </button>
+        <div class="dd-panel" id="rpt-month-dd" style="display:none;max-height:260px;overflow-y:auto;">
+          <div class="dd-item"><input type="checkbox" id="rpt-all-cb" checked onchange="rptToggleAllCB(this)"> <label for="rpt-all-cb" style="cursor:pointer;">ทั้งหมด</label></div>
+          <div class="dd-sep"></div>
+          <div id="rpt-month-opts"></div>
+          <div class="dd-footer">
+            <button class="btn-apply-dd" onclick="applyRptMonthDD()">นำไปใช้</button>
+            <button class="btn-reset-dd" onclick="resetRptMonthDD()">รีเซ็ต</button>
+          </div>
+        </div>
+      </div>
+      <span style="font-size:11px;color:#6B7A8D;">เลือกได้หลายเดือน — ดึงจากวันครบกำหนด (คอลัมน์ D)</span>
     </div>
 
     <!-- Body -->
@@ -846,17 +958,29 @@ function openReport(){
   document.body.style.overflow='hidden';
   document.getElementById('report-date').textContent='ข้อมูล ณ '+new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
 
+  // สร้าง month options สำหรับ report filter
+  const allRptMonths = new Set();
+  [...allData.invoice, ...allData.outgoing, ...allData.ar].forEach(r => {
+    const d = g(r,ci.duedate)||g(r,co.duedate)||g(r,ca.duedate);
+    if(d){const p=d.split('/');if(p.length>=3)allRptMonths.add(p[1]+'/'+p[2]);}
+  });
+  const rptOpts = document.getElementById('rpt-month-opts');
+  if(rptOpts) rptOpts.innerHTML = [...allRptMonths].sort().reverse().slice(0,36).map(m=>
+    `<div class="dd-item"><input type="checkbox" class="rpt-mo" data-val="${m}" checked> <span>${m}</span></div>`
+  ).join('');
+
+  // สร้าง month options สำหรับ AP table
   const apMonths=new Set();
   allData.invoice.forEach(r=>{const d=g(r,ci.duedate);if(d){const p=d.split('/');if(p.length>=3)apMonths.add(p[1]+'/'+p[2]);}});
   const apMSel=document.getElementById('ap-month-sel');
-  apMSel.innerHTML='<option value="all" selected>ทั้งหมด</option>';
-  [...apMonths].sort().reverse().slice(0,24).forEach(m=>{apMSel.innerHTML+=`<option value="${m}">${m}</option>`;});
+  if(apMSel){apMSel.innerHTML='<option value="all" selected>ทั้งหมด</option>';
+  [...apMonths].sort().reverse().slice(0,24).forEach(m=>{apMSel.innerHTML+=`<option value="${m}">${m}</option>`;});}
 
   const arMonths=new Set();
   allData.ar.forEach(r=>{const d=g(r,ca.duedate);if(d){const p=d.split('/');if(p.length>=3)arMonths.add(p[1]+'/'+p[2]);}});
   const arMSel=document.getElementById('ar-month-sel');
-  arMSel.innerHTML='<option value="all" selected>ทั้งหมด</option>';
-  [...arMonths].sort().reverse().slice(0,24).forEach(m=>{arMSel.innerHTML+=`<option value="${m}">${m}</option>`;});
+  if(arMSel){arMSel.innerHTML='<option value="all" selected>ทั้งหมด</option>';
+  [...arMonths].sort().reverse().slice(0,24).forEach(m=>{arMSel.innerHTML+=`<option value="${m}">${m}</option>`;});}
 
   renderReport();
 }
@@ -867,7 +991,7 @@ function renderReport(){
   const ovCnt=apSt.filter(s=>s==='Overdue').length;
   const tdCnt=apSt.filter(s=>s==='Today').length;
   const tot=apSt.length||1;
-  document.getElementById('rpt-ap-overdue').textContent=ovCnt.toLocaleString();
+  document.getElementById('rpt-ap-overdue').textContent=ovCnt.toLocaleString('th-TH');
   document.getElementById('rpt-ap-overdue-pct').textContent='รายการ ('+(ovCnt/tot*100).toFixed(1)+'%)';
   document.getElementById('rpt-ap-today').textContent=tdCnt.toLocaleString();
   const sumAP=allData.invoice.reduce((s,r)=>s+(parseFloat(g(r,ci.balance))||0),0)+allData.outgoing.reduce((s,r)=>s+(parseFloat(g(r,co.total))||0),0);
@@ -1041,6 +1165,102 @@ document.addEventListener('click', e => {
   if(!e.target.closest('.dd-wrap')) document.querySelectorAll('.dd-panel').forEach(p => p.style.display='none');
 });
 
+// Tab Dropdown functions
+function toggleTabDD(id) {
+  const p = document.getElementById(id);
+  const show = p.style.display === 'none';
+  document.querySelectorAll('.dd-panel').forEach(x => x.style.display = 'none');
+  if(show) p.style.display = 'block';
+}
+function tabDDToggleAll(cls, allId) {
+  const cb = document.getElementById(allId);
+  document.querySelectorAll('.' + cls).forEach(b => b.checked = cb.checked);
+}
+
+function buildTabDDOptions() {
+  const ci = COL.invoice, co = COL.outgoing, ca = COL.ar;
+  const colMap = { invoice: ci.duedate, outgoing: co.duedate, ar: ca.duedate };
+  const dataMap = { invoice: allData.invoice, outgoing: allData.outgoing, ar: allData.ar };
+  const optIds = { invoice: 'invoice-dd-opts', outgoing: 'outgoing-dd-opts', ar: 'ar-dd-opts' };
+  const clsMap = { invoice: 'inv-mo', outgoing: 'out-mo', ar: 'ar-mo' };
+
+  ['invoice','outgoing','ar'].forEach(type => {
+    const months = new Set();
+    dataMap[type].forEach(r => {
+      const d = g(r, colMap[type]);
+      if(d) { const p = d.split('/'); if(p.length >= 3) months.add(p[1]+'/'+p[2]); }
+    });
+    const container = document.getElementById(optIds[type]);
+    if(!container) return;
+    container.innerHTML = [...months].sort().reverse().slice(0,36).map(m =>
+      `<div class="dd-item"><input type="checkbox" class="${clsMap[type]}" data-val="${m}" checked> <span>${m}</span></div>`
+    ).join('');
+  });
+}
+
+function applyTabDD(type, lblId, cls, prefix, ddId) {
+  const opts = [...document.querySelectorAll('.'+cls)];
+  const sel = opts.filter(o => o.checked).map(o => o.dataset.val);
+  const lbl = document.getElementById(lblId);
+  lbl.textContent = sel.length === 0 || sel.length === opts.length
+    ? '📅 ' + prefix
+    : '📅 ' + prefix + ': ' + sel.length + ' เดือน';
+  document.getElementById(ddId).style.display = 'none';
+  filterByDueDate(type, sel.length === opts.length ? [] : sel);
+}
+
+function resetTabDD(type, cls, allId, lblId, defaultLbl, ddId) {
+  document.querySelectorAll('.'+cls).forEach(b => b.checked = true);
+  const allCb = document.getElementById(allId);
+  if(allCb) allCb.checked = true;
+  document.getElementById(lblId).textContent = defaultLbl;
+  document.getElementById(ddId).style.display = 'none';
+  filterByDueDate(type, []);
+}
+
+function filterByDueDate(type, months) {
+  const ci = COL.invoice, co = COL.outgoing, ca = COL.ar;
+  const colMap = { invoice: ci.duedate, outgoing: co.duedate, ar: ca.duedate };
+  const col = colMap[type];
+  const rows = document.querySelectorAll('#body-' + type + ' tr');
+  let visible = 0;
+  rows.forEach(tr => {
+    if(!months.length) { tr.style.display = ''; visible++; return; }
+    const due = tr.querySelector('td:nth-child(3)');
+    const dueText = due ? due.textContent.trim() : '';
+    const p = dueText.split('/');
+    const m = p.length >= 3 ? p[1]+'/'+p[2] : '';
+    const show = months.includes(m);
+    tr.style.display = show ? '' : 'none';
+    if(show) visible++;
+  });
+  document.getElementById('count-'+type).textContent = visible + ' รายการ';
+}
+
+function toggleRptDD(){
+  const p=document.getElementById('rpt-month-dd');
+  const show=p.style.display==='none';
+  document.querySelectorAll('.dd-panel').forEach(x=>x.style.display='none');
+  if(show)p.style.display='block';
+}
+function rptToggleAllCB(cb){
+  document.querySelectorAll('.rpt-mo').forEach(b=>b.checked=cb.checked);
+}
+function applyRptMonthDD(){
+  const opts=[...document.querySelectorAll('.rpt-mo')];
+  const sel=opts.filter(o=>o.checked).map(o=>o.dataset.val);
+  document.getElementById('rpt-dd-lbl').textContent=sel.length===0||sel.length===opts.length?'ทั้งหมด':sel.length+' เดือน';
+  document.getElementById('rpt-month-dd').style.display='none';
+  renderReport();
+}
+function resetRptMonthDD(){
+  document.querySelectorAll('.rpt-mo').forEach(b=>b.checked=true);
+  const allCb=document.getElementById('rpt-all-cb');
+  if(allCb)allCb.checked=true;
+  document.getElementById('rpt-dd-lbl').textContent='ทั้งหมด';
+  document.getElementById('rpt-month-dd').style.display='none';
+  renderReport();
+}
 function closeReport(){
   document.getElementById('report-modal').style.display='none';
   document.body.style.overflow='';
