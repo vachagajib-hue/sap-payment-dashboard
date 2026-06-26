@@ -535,11 +535,15 @@ function daysCell(val) {
 
 function parseDueDate(d) {
   if(!d) return null;
-  const p = d.split('/');
+  const sep = d.includes('.') ? '.' : '/';
+  const p = d.split(sep);
   if(p.length < 3) return null;
   let yr = parseInt(p[2]);
   if(yr > 2400) yr = yr - 543;
-  return new Date(yr, parseInt(p[1])-1, parseInt(p[0]));
+  const month = parseInt(p[1]);
+  const day   = parseInt(p[0]);
+  if(isNaN(yr)||isNaN(month)||isNaN(day)) return null;
+  return new Date(yr, month-1, day);
 }
 
 function renderTodaySection() {
@@ -598,12 +602,11 @@ function buildTabDDOptions() {
     dataMap[type].forEach(r => {
       const d = g(r, colMap[type]);
       if(d){
-        const p=d.split('/');
-        if(p.length>=3){
-          let yr=parseInt(p[2]);
-          // แปลง พ.ศ. → ค.ศ. ถ้าจำเป็น (แสดงเป็น ค.ศ.)
-          if(yr>2400) yr=yr-543;
-          months.add(p[1]+'/'+yr);
+        // รองรับทั้ง dd.MM.yyyy (จุด) และ dd/MM/yyyy (slash)
+        const sep = d.includes('.') ? '.' : '/';
+        const p = d.split(sep);
+        if(p.length>=3 && p[2].length===4){
+          months.add(p[1]+'/'+p[2]);
         }
       }
     });
@@ -1291,7 +1294,8 @@ function filterByDueDate(type, months) {
     if(!months.length) { tr.style.display = ''; visible++; return; }
     const due = tr.querySelector('td:nth-child(3)');
     const dueText = due ? due.textContent.trim() : '';
-    const p = dueText.split('/');
+    const sep = dueText.includes('.') ? '.' : '/';
+    const p = dueText.split(sep);
     const m = p.length >= 3 ? p[1]+'/'+p[2] : '';
     const show = months.includes(m);
     tr.style.display = show ? '' : 'none';
