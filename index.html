@@ -56,15 +56,15 @@
   .tab.active { background: var(--surface); color: var(--ap); }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
-  .table-section { background: var(--surface); border-radius: 0 10px 10px 10px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.06); overflow: hidden; }
+  .table-section { background: var(--surface); border-radius: 0 10px 10px 10px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.06); overflow: visible; }
   .table-toolbar { padding: 14px 16px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; border-bottom: 1px solid var(--border); }
   .search-box { padding: 7px 12px; border: 1px solid var(--border); border-radius: 6px; font-family: 'Sarabun', sans-serif; font-size: 14px; width: 240px; outline: none; }
   .search-box:focus { border-color: var(--ap); }
   .filter-btn { padding: 7px 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-family: 'Sarabun', sans-serif; font-size: 13px; font-weight: 500; transition: all 0.15s; color: var(--text); }
   .filter-btn:hover { background: var(--bg); }
   .record-count { font-size: 13px; color: var(--muted); margin-left: auto; }
-  .table-wrap { overflow-x: auto; max-height: 480px; overflow-y: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .table-wrap { overflow-x: visible; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: auto; }
   thead th { background: #F5F7FA; padding: 10px 12px; text-align: left; font-weight: 600; font-size: 12px; color: var(--muted); white-space: nowrap; position: sticky; top: 0; border-bottom: 1px solid var(--border); }
   tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
   tbody tr:hover { background: #F8FAFC; }
@@ -82,13 +82,13 @@
   .kpi-section { margin-bottom: 14px; }
   .kpi-section-hd { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 0.6px; text-transform: uppercase; }
   .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .kpi-card { background: var(--surface); border-radius: 10px; border: 1px solid var(--border); padding: 14px 16px 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-  .kpi-card.ap-card { border-top: 3px solid var(--ap); }
-  .kpi-card.ar-card { border-top: 3px solid var(--ar); }
-  .kpi-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin-bottom: 8px; }
-  .kpi-val { font-size: 22px; font-weight: 700; line-height: 1; }
-  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
-  .kpi-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border); }
+  .kpi-card { background: var(--surface); border-radius: 12px; border: 1px solid var(--border); padding: 22px 24px 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+  .kpi-card.ap-card { border-top: 4px solid var(--ap); }
+  .kpi-card.ar-card { border-top: 4px solid var(--ar); }
+  .kpi-lbl { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin-bottom: 12px; }
+  .kpi-val { font-size: 36px; font-weight: 700; line-height: 1; }
+  .kpi-sub { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .kpi-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
   .kpi-tag { font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
   .tag-red { background: var(--overdue-bg); color: var(--overdue); }
   .tag-yellow { background: var(--today-bg); color: #B45309; }
@@ -164,7 +164,7 @@
       </div>
       <div class="kpi-card ap-card">
         <div class="kpi-lbl">ยอดค้างจ่ายรวม (THB)</div>
-        <div class="kpi-val c-blue" id="total-ap" style="font-size:18px;">—</div>
+        <div class="kpi-val c-blue" id="total-ap" style="font-size:28px;">—</div>
         <div class="kpi-sub">Invoice + Outgoing</div>
         <div class="kpi-foot">
           <span class="kpi-tag tag-blue">AP รวม</span>
@@ -198,7 +198,7 @@
       </div>
       <div class="kpi-card ar-card">
         <div class="kpi-lbl">ยอดค้างรับรวม (THB)</div>
-        <div class="kpi-val c-green" id="total-ar" style="font-size:18px;">—</div>
+        <div class="kpi-val c-green" id="total-ar" style="font-size:28px;">—</div>
         <div class="kpi-sub">AR Invoice</div>
         <div class="kpi-foot">
           <span class="kpi-tag tag-green">AR รวม</span>
@@ -558,6 +558,137 @@ function switchTab(name) {
 }
 
 loadAll();
+</script>
+<!-- Modal รายงานผู้บริหาร -->
+<div id="report-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;overflow-y:auto;">
+  <div style="max-width:1100px;margin:30px auto;padding:0 16px 40px;">
+    <div style="background:#1565C0;color:#fff;padding:18px 24px;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+      <div>
+        <div style="font-size:18px;font-weight:700;">📊 รายงานสรุปผู้บริหาร</div>
+        <div style="font-size:12px;opacity:0.75;margin-top:2px;">บริษัท รถเจาะไทย จำกัด</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span id="report-date" style="font-size:12px;opacity:0.8;"></span>
+        <button onclick="window.print()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:7px 14px;border-radius:6px;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:13px;">🖨️ พิมพ์</button>
+        <button onclick="closeReport()" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:#fff;padding:7px 14px;border-radius:6px;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:13px;">✕ ปิด</button>
+      </div>
+    </div>
+    <div style="background:#F0F2F5;padding:20px;border-radius:0 0 12px 12px;border:1px solid #E2E6EA;border-top:none;">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+        <div style="background:#fff;border-radius:10px;padding:16px;border-top:3px solid #E53935;border:1px solid #E2E6EA;">
+          <div style="font-size:11px;color:#6B7A8D;font-weight:600;text-transform:uppercase;margin-bottom:8px;">AP เกินกำหนด</div>
+          <div id="rpt-ap-overdue" style="font-size:28px;font-weight:700;color:#E53935;">—</div>
+          <div style="font-size:12px;color:#6B7A8D;margin-top:4px;">รายการ</div>
+        </div>
+        <div style="background:#fff;border-radius:10px;padding:16px;border-top:3px solid #F9A825;border:1px solid #E2E6EA;">
+          <div style="font-size:11px;color:#6B7A8D;font-weight:600;text-transform:uppercase;margin-bottom:8px;">AP ครบกำหนดวันนี้</div>
+          <div id="rpt-ap-today" style="font-size:28px;font-weight:700;color:#F9A825;">—</div>
+          <div style="font-size:12px;color:#6B7A8D;margin-top:4px;">รายการ</div>
+        </div>
+        <div style="background:#fff;border-radius:10px;padding:16px;border-top:3px solid #1565C0;border:1px solid #E2E6EA;">
+          <div style="font-size:11px;color:#6B7A8D;font-weight:600;text-transform:uppercase;margin-bottom:8px;">ยอดค้างจ่าย (AP)</div>
+          <div id="rpt-total-ap" style="font-size:20px;font-weight:700;color:#1565C0;">—</div>
+          <div style="font-size:12px;color:#6B7A8D;margin-top:4px;">บาท</div>
+        </div>
+        <div style="background:#fff;border-radius:10px;padding:16px;border-top:3px solid #2E7D32;border:1px solid #E2E6EA;">
+          <div style="font-size:11px;color:#6B7A8D;font-weight:600;text-transform:uppercase;margin-bottom:8px;">ยอดค้างรับ (AR)</div>
+          <div id="rpt-total-ar" style="font-size:20px;font-weight:700;color:#2E7D32;">—</div>
+          <div style="font-size:12px;color:#6B7A8D;margin-top:4px;">บาท</div>
+        </div>
+      </div>
+      <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:18px;margin-bottom:16px;">
+        <div style="font-size:14px;font-weight:700;color:#1565C0;border-left:4px solid #1565C0;padding-left:10px;margin-bottom:14px;">⬆️ เจ้าหนี้ค้างชำระ — เรียงจากนานที่สุด</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead><tr style="background:#F5F7FA;">
+            <th style="padding:10px 12px;text-align:left;font-size:12px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">#</th>
+            <th style="padding:10px 12px;text-align:left;font-size:12px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">ชื่อเจ้าหนี้</th>
+            <th style="padding:10px 12px;text-align:left;font-size:12px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">เลขที่เอกสาร</th>
+            <th style="padding:10px 12px;text-align:left;font-size:12px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">วันครบกำหนด</th>
+            <th style="padding:10px 12px;text-align:right;font-size:12px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">ค้างมา(วัน)</th>
+            <th style="padding:10px 12px;text-align:left;font-size:12px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">สถานะ</th>
+            <th style="padding:10px 12px;text-align:right;font-size:12px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">ยอดค้างจ่าย (บาท)</th>
+          </tr></thead>
+          <tbody id="rpt-ap-body"></tbody>
+        </table>
+      </div>
+      <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:18px;">
+        <div style="font-size:14px;font-weight:700;color:#2E7D32;border-left:4px solid #2E7D32;padding-left:10px;margin-bottom:14px;">⬇️ ลูกหนี้ค้างรับ — เรียงจากนานที่สุด</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead><tr style="background:#F5F7FA;">
+            <th style="padding:10px 12px;text-align:left;font-size:12px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">#</th>
+            <th style="padding:10px 12px;text-align:left;font-size:12px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">ชื่อลูกค้า</th>
+            <th style="padding:10px 12px;text-align:left;font-size:12px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">เลขที่เอกสาร</th>
+            <th style="padding:10px 12px;text-align:left;font-size:12px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">วันครบกำหนด</th>
+            <th style="padding:10px 12px;text-align:right;font-size:12px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">ค้างมา(วัน)</th>
+            <th style="padding:10px 12px;text-align:left;font-size:12px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">สถานะ</th>
+            <th style="padding:10px 12px;text-align:right;font-size:12px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">ยอดค้างรับ (บาท)</th>
+          </tr></thead>
+          <tbody id="rpt-ar-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openReport() {
+  const ci = COL.invoice, co = COL.outgoing, ca = COL.ar;
+  document.getElementById('report-modal').style.display = 'block';
+  document.getElementById('report-date').textContent =
+    'ข้อมูล ณ ' + new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+
+  const apStatus = [
+    ...allData.invoice.map(r => g(r,ci.status)),
+    ...allData.outgoing.map(r => statusFromDays(parseInt(g(r,co.daysleft))))
+  ];
+  document.getElementById('rpt-ap-overdue').textContent = apStatus.filter(s=>s==='Overdue').length.toLocaleString();
+  document.getElementById('rpt-ap-today').textContent   = apStatus.filter(s=>s==='Today').length.toLocaleString();
+
+  const sumAP = allData.invoice.reduce((s,r)=>s+(parseFloat(g(r,ci.balance))||0),0)
+              + allData.outgoing.reduce((s,r)=>s+(parseFloat(g(r,co.total))||0),0);
+  const sumAR = allData.ar.reduce((s,r)=>s+(parseFloat(g(r,ca.balance))||0),0);
+  document.getElementById('rpt-total-ap').textContent = sumAP.toLocaleString('th-TH',{maximumFractionDigits:0});
+  document.getElementById('rpt-total-ar').textContent = sumAR.toLocaleString('th-TH',{maximumFractionDigits:0});
+
+  const apRows = allData.invoice
+    .filter(r => g(r,ci.status)==='Overdue'||g(r,ci.status)==='Today')
+    .sort((a,b)=>(parseInt(g(a,ci.daysleft))||0)-(parseInt(g(b,ci.daysleft))||0));
+  document.getElementById('rpt-ap-body').innerHTML = apRows.slice(0,50).map((r,i)=>{
+    const d=parseInt(g(r,ci.daysleft));
+    const badge=d<0?'<span style="background:#FFEBEE;color:#C62828;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;">เกินกำหนด</span>'
+                   :'<span style="background:#FFF8E1;color:#B45309;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;">วันนี้</span>';
+    return `<tr style="border-bottom:1px solid #E2E6EA;">
+      <td style="padding:9px 12px;color:#6B7A8D;">${i+1}</td>
+      <td style="padding:9px 12px;">${g(r,ci.vendorname)}</td>
+      <td style="padding:9px 12px;">${g(r,ci.docnum)}</td>
+      <td style="padding:9px 12px;">${g(r,ci.duedate)}</td>
+      <td style="padding:9px 12px;text-align:right;color:#E53935;font-weight:600;">${Math.abs(d)}</td>
+      <td style="padding:9px 12px;">${badge}</td>
+      <td style="padding:9px 12px;text-align:right;font-weight:600;">${fmtNum(g(r,ci.balance))}</td>
+    </tr>`;
+  }).join('');
+
+  const arRows = allData.ar
+    .filter(r=>g(r,ca.status)==='Overdue'||g(r,ca.status)==='Today')
+    .sort((a,b)=>(parseInt(g(a,ca.daysleft))||0)-(parseInt(g(b,ca.daysleft))||0));
+  document.getElementById('rpt-ar-body').innerHTML = arRows.slice(0,50).map((r,i)=>{
+    const d=parseInt(g(r,ca.daysleft));
+    const badge=d<0?'<span style="background:#FFEBEE;color:#C62828;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;">เกินกำหนด</span>'
+                   :'<span style="background:#FFF8E1;color:#B45309;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;">วันนี้</span>';
+    return `<tr style="border-bottom:1px solid #E2E6EA;">
+      <td style="padding:9px 12px;color:#6B7A8D;">${i+1}</td>
+      <td style="padding:9px 12px;">${g(r,ca.custname)}</td>
+      <td style="padding:9px 12px;">${g(r,ca.docnum)}</td>
+      <td style="padding:9px 12px;">${g(r,ca.duedate)}</td>
+      <td style="padding:9px 12px;text-align:right;color:#E53935;font-weight:600;">${Math.abs(d)}</td>
+      <td style="padding:9px 12px;">${badge}</td>
+      <td style="padding:9px 12px;text-align:right;font-weight:600;">${fmtNum(g(r,ca.balance))}</td>
+    </tr>`;
+  }).join('');
+}
+function closeReport() {
+  document.getElementById('report-modal').style.display='none';
+}
 </script>
 </body>
 </html>
