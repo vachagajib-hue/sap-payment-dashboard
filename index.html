@@ -855,12 +855,33 @@ function renderAR(rows) {
 function applyFilters(type) {
   const rows = document.querySelectorAll(`#body-${type} tr`);
   const sf = currentFilter[type], st = currentSearch[type].toLowerCase();
+
+  // Header month/year filter
+  const allMoOpts = document.querySelectorAll('.hdr-mo-opt');
+  const allYrOpts = document.querySelectorAll('.hdr-yr-opt');
+  const selMo = [...allMoOpts].filter(o=>o.checked).map(o=>o.dataset.val);
+  const selYr = [...allYrOpts].filter(o=>o.checked).map(o=>o.dataset.val);
+  const moAll = allMoOpts.length===0 || selMo.length===allMoOpts.length;
+  const yrAll = allYrOpts.length===0 || selYr.length===allYrOpts.length;
+
   let visible = 0;
   rows.forEach(tr => {
     const matchS = sf === 'all' || tr.dataset.status === sf;
     const matchT = !st || (tr.dataset.search||'').includes(st);
-    tr.style.display = matchS && matchT ? '' : 'none';
-    if (matchS && matchT) visible++;
+
+    let matchH = true;
+    if (!moAll || !yrAll) {
+      const due = tr.querySelector('td:nth-child(3)');
+      const dt  = due ? due.textContent.trim() : '';
+      const sep = dt.includes('.') ? '.' : '/';
+      const p   = dt.split(sep);
+      const mo  = p.length>=3 ? p[1].padStart(2,'0') : '';
+      const yr  = p.length>=3 ? p[2] : '';
+      matchH = (moAll || selMo.includes(mo)) && (yrAll || selYr.includes(yr));
+    }
+
+    tr.style.display = matchS && matchT && matchH ? '' : 'none';
+    if (matchS && matchT && matchH) visible++;
   });
   document.getElementById(`count-${type}`).textContent = `${visible} รายการ`;
 }
@@ -1586,34 +1607,8 @@ function applyHdrFilterToAllTabs(){
   ['invoice','outgoing','ar'].forEach(type=>filterByHdr(type));
 }
 function filterByHdr(type){
-  const allMoOpts=document.querySelectorAll('.hdr-mo-opt');
-  const allYrOpts=document.querySelectorAll('.hdr-yr-opt');
-  // ถ้ายังไม่ได้ build options = ไม่กรอง
-  if(allMoOpts.length===0&&allYrOpts.length===0){return;}
-  const selMo=[...allMoOpts].filter(o=>o.checked).map(o=>o.dataset.val);
-  const selYr=[...allYrOpts].filter(o=>o.checked).map(o=>o.dataset.val);
-  const allMo=allMoOpts.length;
-  const allYr=allYrOpts.length;
-  const moFilterAll=selMo.length===0||selMo.length===allMo;
-  const yrFilterAll=selYr.length===0||selYr.length===allYr;
-  const rows=document.querySelectorAll('#body-'+type+' tr');
-  let visible=0;
-  rows.forEach(tr=>{
-    if(moFilterAll&&yrFilterAll){tr.style.display='';visible++;return;}
-    const due=tr.querySelector('td:nth-child(3)');
-    const dueText=due?due.textContent.trim():'';
-    const sep=dueText.includes('.')?'.':'/';
-    const p=dueText.split(sep);
-    // dd.MM.yyyy → p[0]=dd, p[1]=MM, p[2]=yyyy
-    const mo=p.length>=3?p[1].padStart(2,'0'):'';
-    const yr=p.length>=3?p[2]:'';
-    const moOk=moFilterAll||selMo.includes(mo);
-    const yrOk=yrFilterAll||selYr.includes(yr);
-    tr.style.display=(moOk&&yrOk)?'':'none';
-    if(moOk&&yrOk)visible++;
-  });
-  const cnt=document.getElementById('count-'+type);
-  if(cnt)cnt.textContent=visible+' รายการ';
+  // re-render ผ่าน applyFilters เพื่อให้ทำงานร่วมกับ status filter
+  applyFilters(type);
 }
 function buildHdrFilterOptions(){
   const ci=COL.invoice,co=COL.outgoing,ca=COL.ar;
