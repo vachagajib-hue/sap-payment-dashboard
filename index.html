@@ -145,6 +145,7 @@
   .dd-wrap { position: relative; display: inline-block; }
   .dd-btn { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); cursor: pointer; font-size: 14px; color: var(--text); font-family: 'Sarabun', sans-serif; min-width: 160px; justify-content: space-between; }
   .dd-btn:hover { border-color: var(--ap); }
+  .dd-btn.active { border-color: var(--ap); background: var(--ap-bg); color: var(--ap); }
   .dd-panel { position: absolute; top: calc(100% + 4px); left: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px; z-index: 200; min-width: 210px; box-shadow: 0 4px 14px rgba(0,0,0,.1); }
   .dd-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; cursor: pointer; font-size: 13px; color: var(--text); }
   .dd-item:hover { background: var(--bg); }
@@ -359,18 +360,33 @@
         <button class="filter-btn" onclick="filterStatus('invoice','Overdue')">🔴 เกิน</button>
         <button class="filter-btn" onclick="filterStatus('invoice','Today')">🟡 วันนี้</button>
         <button class="filter-btn" onclick="filterStatus('invoice','Upcoming')">🟢 ยังไม่ถึง</button>
-        <div class="dd-wrap" style="margin-left:4px;">
-          <button class="dd-btn" style="min-width:175px;padding:6px 11px;font-size:12px;" onclick="toggleTabDD('invoice-dd')">
-            <span id="invoice-dd-lbl">📅 วันครบกำหนดจ่าย</span>
+        <div class="dd-wrap">
+          <button class="dd-btn" id="inv-mo-btn" style="min-width:110px;padding:6px 10px;font-size:12px;" onclick="toggleTabDD2('inv-mo-dd','inv-mo-btn')">
+            <span id="inv-mo-lbl">📅 เดือน</span>
             <span style="font-size:11px;color:var(--muted);">▾</span>
           </button>
-          <div class="dd-panel" id="invoice-dd" style="display:none;">
-            <div class="dd-item"><input type="checkbox" id="inv-all2" checked onchange="tabDDToggleAll('inv-mo','inv-all2')"> <label for="inv-all2" style="cursor:pointer;">ทั้งหมด</label></div>
+          <div class="dd-panel" id="inv-mo-dd" style="display:none;max-height:220px;overflow-y:auto;">
+            <div class="dd-item"><input type="checkbox" id="inv-mo-all" checked onchange="tabDDToggleAll('inv-mo-opt','inv-mo-all')"> <label for="inv-mo-all" style="cursor:pointer;">ทั้งหมด</label></div>
             <div class="dd-sep"></div>
-            <div id="invoice-dd-opts"></div>
+            <div id="inv-mo-opts"></div>
             <div class="dd-footer">
-              <button class="btn-apply-dd" onclick="applyTabDD('invoice','invoice-dd-lbl','inv-mo','วันครบกำหนดจ่าย','invoice-dd')">นำไปใช้</button>
-              <button class="btn-reset-dd" onclick="resetTabDD('invoice','inv-mo','inv-all2','invoice-dd-lbl','📅 วันครบกำหนดจ่าย','invoice-dd')">รีเซ็ต</button>
+              <button class="btn-apply-dd" onclick="applyTabDD2('invoice','inv-mo-lbl','inv-mo-opt','📅 เดือน','inv-mo-dd','inv-mo-btn')">นำไปใช้</button>
+              <button class="btn-reset-dd" onclick="resetTabDD2('invoice','inv-mo-opt','inv-mo-all','inv-mo-lbl','📅 เดือน','inv-mo-dd','inv-mo-btn')">รีเซ็ต</button>
+            </div>
+          </div>
+        </div>
+        <div class="dd-wrap">
+          <button class="dd-btn" id="inv-yr-btn" style="min-width:100px;padding:6px 10px;font-size:12px;" onclick="toggleTabDD2('inv-yr-dd','inv-yr-btn')">
+            <span id="inv-yr-lbl">📅 ปี</span>
+            <span style="font-size:11px;color:var(--muted);">▾</span>
+          </button>
+          <div class="dd-panel" id="inv-yr-dd" style="display:none;max-height:220px;overflow-y:auto;">
+            <div class="dd-item"><input type="checkbox" id="inv-yr-all" checked onchange="tabDDToggleAll('inv-yr-opt','inv-yr-all')"> <label for="inv-yr-all" style="cursor:pointer;">ทั้งหมด</label></div>
+            <div class="dd-sep"></div>
+            <div id="inv-yr-opts"></div>
+            <div class="dd-footer">
+              <button class="btn-apply-dd" onclick="applyTabDD2('invoice','inv-yr-lbl','inv-yr-opt','📅 ปี','inv-yr-dd','inv-yr-btn')">นำไปใช้</button>
+              <button class="btn-reset-dd" onclick="resetTabDD2('invoice','inv-yr-opt','inv-yr-all','inv-yr-lbl','📅 ปี','inv-yr-dd','inv-yr-btn')">รีเซ็ต</button>
             </div>
           </div>
         </div>
@@ -401,18 +417,33 @@
         <button class="filter-btn" onclick="filterStatus('outgoing','Overdue')">🔴 เกิน</button>
         <button class="filter-btn" onclick="filterStatus('outgoing','Today')">🟡 วันนี้</button>
         <button class="filter-btn" onclick="filterStatus('outgoing','Upcoming')">🟢 ยังไม่ถึง</button>
-        <div class="dd-wrap" style="margin-left:4px;">
-          <button class="dd-btn" style="min-width:175px;padding:6px 11px;font-size:12px;" onclick="toggleTabDD('outgoing-dd')">
-            <span id="outgoing-dd-lbl">📅 วันครบกำหนดจ่าย</span>
+        <div class="dd-wrap">
+          <button class="dd-btn" id="out-mo-btn" style="min-width:110px;padding:6px 10px;font-size:12px;" onclick="toggleTabDD2('out-mo-dd','out-mo-btn')">
+            <span id="out-mo-lbl">📅 เดือน</span>
             <span style="font-size:11px;color:var(--muted);">▾</span>
           </button>
-          <div class="dd-panel" id="outgoing-dd" style="display:none;">
-            <div class="dd-item"><input type="checkbox" id="out-all2" checked onchange="tabDDToggleAll('out-mo','out-all2')"> <label for="out-all2" style="cursor:pointer;">ทั้งหมด</label></div>
+          <div class="dd-panel" id="out-mo-dd" style="display:none;max-height:220px;overflow-y:auto;">
+            <div class="dd-item"><input type="checkbox" id="out-mo-all" checked onchange="tabDDToggleAll('out-mo-opt','out-mo-all')"> <label for="out-mo-all" style="cursor:pointer;">ทั้งหมด</label></div>
             <div class="dd-sep"></div>
-            <div id="outgoing-dd-opts"></div>
+            <div id="out-mo-opts"></div>
             <div class="dd-footer">
-              <button class="btn-apply-dd" onclick="applyTabDD('outgoing','outgoing-dd-lbl','out-mo','วันครบกำหนดจ่าย','outgoing-dd')">นำไปใช้</button>
-              <button class="btn-reset-dd" onclick="resetTabDD('outgoing','out-mo','out-all2','outgoing-dd-lbl','📅 วันครบกำหนดจ่าย','outgoing-dd')">รีเซ็ต</button>
+              <button class="btn-apply-dd" onclick="applyTabDD2('outgoing','out-mo-lbl','out-mo-opt','📅 เดือน','out-mo-dd','out-mo-btn')">นำไปใช้</button>
+              <button class="btn-reset-dd" onclick="resetTabDD2('outgoing','out-mo-opt','out-mo-all','out-mo-lbl','📅 เดือน','out-mo-dd','out-mo-btn')">รีเซ็ต</button>
+            </div>
+          </div>
+        </div>
+        <div class="dd-wrap">
+          <button class="dd-btn" id="out-yr-btn" style="min-width:100px;padding:6px 10px;font-size:12px;" onclick="toggleTabDD2('out-yr-dd','out-yr-btn')">
+            <span id="out-yr-lbl">📅 ปี</span>
+            <span style="font-size:11px;color:var(--muted);">▾</span>
+          </button>
+          <div class="dd-panel" id="out-yr-dd" style="display:none;max-height:220px;overflow-y:auto;">
+            <div class="dd-item"><input type="checkbox" id="out-yr-all" checked onchange="tabDDToggleAll('out-yr-opt','out-yr-all')"> <label for="out-yr-all" style="cursor:pointer;">ทั้งหมด</label></div>
+            <div class="dd-sep"></div>
+            <div id="out-yr-opts"></div>
+            <div class="dd-footer">
+              <button class="btn-apply-dd" onclick="applyTabDD2('outgoing','out-yr-lbl','out-yr-opt','📅 ปี','out-yr-dd','out-yr-btn')">นำไปใช้</button>
+              <button class="btn-reset-dd" onclick="resetTabDD2('outgoing','out-yr-opt','out-yr-all','out-yr-lbl','📅 ปี','out-yr-dd','out-yr-btn')">รีเซ็ต</button>
             </div>
           </div>
         </div>
@@ -442,18 +473,33 @@
         <button class="filter-btn" onclick="filterStatus('ar','Overdue')">🔴 เกิน</button>
         <button class="filter-btn" onclick="filterStatus('ar','Today')">🟡 วันนี้</button>
         <button class="filter-btn" onclick="filterStatus('ar','Upcoming')">🟢 ยังไม่ถึง</button>
-        <div class="dd-wrap" style="margin-left:4px;">
-          <button class="dd-btn" style="min-width:175px;padding:6px 11px;font-size:12px;" onclick="toggleTabDD('ar-dd')">
-            <span id="ar-dd-lbl">📅 วันครบกำหนดรับ</span>
+        <div class="dd-wrap">
+          <button class="dd-btn" id="ar-mo-btn" style="min-width:110px;padding:6px 10px;font-size:12px;" onclick="toggleTabDD2('ar-mo-dd','ar-mo-btn')">
+            <span id="ar-mo-lbl">📅 เดือน</span>
             <span style="font-size:11px;color:var(--muted);">▾</span>
           </button>
-          <div class="dd-panel" id="ar-dd" style="display:none;">
-            <div class="dd-item"><input type="checkbox" id="ar-all2" checked onchange="tabDDToggleAll('ar-mo','ar-all2')"> <label for="ar-all2" style="cursor:pointer;">ทั้งหมด</label></div>
+          <div class="dd-panel" id="ar-mo-dd" style="display:none;max-height:220px;overflow-y:auto;">
+            <div class="dd-item"><input type="checkbox" id="ar-mo-all" checked onchange="tabDDToggleAll('ar-mo-opt','ar-mo-all')"> <label for="ar-mo-all" style="cursor:pointer;">ทั้งหมด</label></div>
             <div class="dd-sep"></div>
-            <div id="ar-dd-opts"></div>
+            <div id="ar-mo-opts"></div>
             <div class="dd-footer">
-              <button class="btn-apply-dd" onclick="applyTabDD('ar','ar-dd-lbl','ar-mo','วันครบกำหนดรับ','ar-dd')">นำไปใช้</button>
-              <button class="btn-reset-dd" onclick="resetTabDD('ar','ar-mo','ar-all2','ar-dd-lbl','📅 วันครบกำหนดรับ','ar-dd')">รีเซ็ต</button>
+              <button class="btn-apply-dd" onclick="applyTabDD2('ar','ar-mo-lbl','ar-mo-opt','📅 เดือน','ar-mo-dd','ar-mo-btn')">นำไปใช้</button>
+              <button class="btn-reset-dd" onclick="resetTabDD2('ar','ar-mo-opt','ar-mo-all','ar-mo-lbl','📅 เดือน','ar-mo-dd','ar-mo-btn')">รีเซ็ต</button>
+            </div>
+          </div>
+        </div>
+        <div class="dd-wrap">
+          <button class="dd-btn" id="ar-yr-btn" style="min-width:100px;padding:6px 10px;font-size:12px;" onclick="toggleTabDD2('ar-yr-dd','ar-yr-btn')">
+            <span id="ar-yr-lbl">📅 ปี</span>
+            <span style="font-size:11px;color:var(--muted);">▾</span>
+          </button>
+          <div class="dd-panel" id="ar-yr-dd" style="display:none;max-height:220px;overflow-y:auto;">
+            <div class="dd-item"><input type="checkbox" id="ar-yr-all" checked onchange="tabDDToggleAll('ar-yr-opt','ar-yr-all')"> <label for="ar-yr-all" style="cursor:pointer;">ทั้งหมด</label></div>
+            <div class="dd-sep"></div>
+            <div id="ar-yr-opts"></div>
+            <div class="dd-footer">
+              <button class="btn-apply-dd" onclick="applyTabDD2('ar','ar-yr-lbl','ar-yr-opt','📅 ปี','ar-yr-dd','ar-yr-btn')">นำไปใช้</button>
+              <button class="btn-reset-dd" onclick="resetTabDD2('ar','ar-yr-opt','ar-yr-all','ar-yr-lbl','📅 ปี','ar-yr-dd','ar-yr-btn')">รีเซ็ต</button>
             </div>
           </div>
         </div>
@@ -623,27 +669,79 @@ function extractMonthYear(d) {
   if(yr.length !== 4 || isNaN(parseInt(yr))) return '';
   return mo + '/' + yr;
 }
+function toggleTabDD2(ddId,btnId){
+  const p=document.getElementById(ddId);
+  const show=p.style.display==='none';
+  document.querySelectorAll('.dd-panel').forEach(x=>x.style.display='none');
+  if(show)p.style.display='block';
+}
+function tabDDToggleAll(cls,allId){
+  const cb=document.getElementById(allId);
+  document.querySelectorAll('.'+cls).forEach(b=>b.checked=cb.checked);
+}
+function applyTabDD2(type,lblId,cls,prefix,ddId,btnId){
+  const opts=[...document.querySelectorAll('.'+cls)];
+  const sel=opts.filter(o=>o.checked);
+  const isAll=sel.length===0||sel.length===opts.length;
+  document.getElementById(lblId).textContent=isAll?prefix:prefix+': '+sel.length;
+  const btn=document.getElementById(btnId);if(btn)btn.classList.toggle('active',!isAll);
+  document.getElementById(ddId).style.display='none';
+  filterByDueDateMoYr(type);
+}
+function resetTabDD2(type,cls,allId,lblId,def,ddId,btnId){
+  document.querySelectorAll('.'+cls).forEach(b=>b.checked=true);
+  const allCb=document.getElementById(allId);if(allCb)allCb.checked=true;
+  document.getElementById(lblId).textContent=def;
+  const btn=document.getElementById(btnId);if(btn)btn.classList.remove('active');
+  document.getElementById(ddId).style.display='none';
+  filterByDueDateMoYr(type);
+}
+const moClsMapG={invoice:'inv-mo-opt',outgoing:'out-mo-opt',ar:'ar-mo-opt'};
+const yrClsMapG={invoice:'inv-yr-opt',outgoing:'out-yr-opt',ar:'ar-yr-opt'};
+function filterByDueDateMoYr(type){
+  const selMo=[...document.querySelectorAll('.'+moClsMapG[type]+':checked')].map(o=>o.dataset.val);
+  const allMo=document.querySelectorAll('.'+moClsMapG[type]).length;
+  const selYr=[...document.querySelectorAll('.'+yrClsMapG[type]+':checked')].map(o=>o.dataset.val);
+  const allYr=document.querySelectorAll('.'+yrClsMapG[type]).length;
+  const rows=document.querySelectorAll('#body-'+type+' tr');
+  let visible=0;
+  rows.forEach(tr=>{
+    const due=tr.querySelector('td:nth-child(3)');
+    const dueText=due?due.textContent.trim():'';
+    const sep=dueText.includes('.')?'.':'/';
+    const p=dueText.split(sep);
+    const mo=p.length>=2?p[1]:'';
+    const yr=p.length>=3?p[2]:'';
+    const moOk=selMo.length===0||selMo.length===allMo||selMo.includes(mo);
+    const yrOk=selYr.length===0||selYr.length===allYr||selYr.includes(yr);
+    const show=moOk&&yrOk;
+    tr.style.display=show?'':'none';
+    if(show)visible++;
+  });
+  document.getElementById('count-'+type).textContent=visible+' รายการ';
+}
+const moNamesG=['','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
 function buildTabDDOptions() {
-  const ci = COL.invoice, co = COL.outgoing, ca = COL.ar;
-  const dataMap = { invoice: allData.invoice, outgoing: allData.outgoing, ar: allData.ar };
-  const colMap  = { invoice: ci.duedate, outgoing: co.duedate, ar: ca.duedate };
-  const optIds  = { invoice: 'invoice-dd-opts', outgoing: 'outgoing-dd-opts', ar: 'ar-dd-opts' };
-  const clsMap  = { invoice: 'inv-mo', outgoing: 'out-mo', ar: 'ar-mo' };
-  ['invoice','outgoing','ar'].forEach(type => {
-    const months = new Set();
-    dataMap[type].forEach(r => {
-      const m = extractMonthYear(g(r, colMap[type]));
-      if(m) months.add(m);
+  const ci=COL.invoice,co=COL.outgoing,ca=COL.ar;
+  const dataMap={invoice:allData.invoice,outgoing:allData.outgoing,ar:allData.ar};
+  const colMap={invoice:ci.duedate,outgoing:co.duedate,ar:ca.duedate};
+  const moOptIds={invoice:'inv-mo-opts',outgoing:'out-mo-opts',ar:'ar-mo-opts'};
+  const yrOptIds={invoice:'inv-yr-opts',outgoing:'out-yr-opts',ar:'ar-yr-opts'};
+  const moCls={invoice:'inv-mo-opt',outgoing:'out-mo-opt',ar:'ar-mo-opt'};
+  const yrCls={invoice:'inv-yr-opt',outgoing:'out-yr-opt',ar:'ar-yr-opt'};
+  ['invoice','outgoing','ar'].forEach(type=>{
+    const months=new Set(),years=new Set();
+    dataMap[type].forEach(r=>{
+      const my=extractMonthYear(g(r,colMap[type]));
+      if(my){const p=my.split('/');months.add(p[0]);years.add(p[1]);}
     });
-    const container = document.getElementById(optIds[type]);
-    if(!container) return;
-    container.innerHTML = [...months].sort((a,b)=>{
-      const pa=a.split('/'), pb=b.split('/');
-      const ya=parseInt(pa[1]||0), yb=parseInt(pb[1]||0);
-      const ma=parseInt(pa[0]||0), mb=parseInt(pb[0]||0);
-      return ya!==yb ? ya-yb : ma-mb;
-    }).map(m =>
-      `<div class="dd-item"><input type="checkbox" class="${clsMap[type]}" data-val="${m}" checked> <span>${m}</span></div>`
+    const moCont=document.getElementById(moOptIds[type]);
+    if(moCont) moCont.innerHTML=[...months].sort((a,b)=>parseInt(a)-parseInt(b)).map(m=>
+      `<div class="dd-item"><input type="checkbox" class="${moCls[type]}" data-val="${m}" checked> <span>${m} — ${moNamesG[parseInt(m)]||''}</span></div>`
+    ).join('');
+    const yrCont=document.getElementById(yrOptIds[type]);
+    if(yrCont) yrCont.innerHTML=[...years].sort((a,b)=>parseInt(a)-parseInt(b)).map(y=>
+      `<div class="dd-item"><input type="checkbox" class="${yrCls[type]}" data-val="${y}" checked> <span>${y}</span></div>`
     ).join('');
   });
 }
@@ -930,25 +1028,51 @@ loadAll();
       </div>
     </div>
 
-    <!-- Filter Bar -->
+    <!-- Filter Bar — แยกเดือน และ ปี -->
     <div style="background:#fff;border-bottom:1px solid #E2E6EA;padding:9px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
       <span style="font-size:13px;font-weight:600;color:#6B7A8D;"><i class="ti ti-calendar" aria-hidden="true" style="font-size:14px;vertical-align:-2px;margin-right:3px;"></i> วันครบกำหนด</span>
-      <div class="dd-wrap">
-        <button class="dd-btn" style="min-width:155px;padding:7px 12px;font-size:13px;" onclick="toggleRptDD()">
-          <span id="rpt-dd-lbl">ทั้งหมด</span>
-          <span style="font-size:11px;color:#6B7A8D;">▾</span>
-        </button>
-        <div class="dd-panel" id="rpt-month-dd" style="display:none;max-height:260px;overflow-y:auto;">
-          <div class="dd-item"><input type="checkbox" id="rpt-all-cb" checked onchange="rptToggleAllCB(this)"> <label for="rpt-all-cb" style="cursor:pointer;">ทั้งหมด</label></div>
-          <div class="dd-sep"></div>
-          <div id="rpt-month-opts"></div>
-          <div class="dd-footer">
-            <button class="btn-apply-dd" onclick="applyRptMonthDD()">นำไปใช้</button>
-            <button class="btn-reset-dd" onclick="resetRptMonthDD()">รีเซ็ต</button>
+
+      <!-- Dropdown เดือน -->
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span style="font-size:12px;color:#6B7A8D;">เดือน</span>
+        <div class="dd-wrap">
+          <button class="dd-btn" style="min-width:130px;padding:7px 12px;font-size:13px;" onclick="toggleRptDD('rpt-mo-dd')">
+            <span id="rpt-mo-lbl">ทั้งหมด</span>
+            <span style="font-size:11px;color:#6B7A8D;">▾</span>
+          </button>
+          <div class="dd-panel" id="rpt-mo-dd" style="display:none;max-height:240px;overflow-y:auto;">
+            <div class="dd-item"><input type="checkbox" id="rpt-mo-all" checked onchange="rptToggleAll('rpt-mo-opt','rpt-mo-all')"> <label for="rpt-mo-all" style="cursor:pointer;">ทั้งหมด</label></div>
+            <div class="dd-sep"></div>
+            <div id="rpt-mo-opts"></div>
+            <div class="dd-footer">
+              <button class="btn-apply-dd" onclick="applyRptFilter('rpt-mo-lbl','rpt-mo-opt','เดือน','rpt-mo-dd')">นำไปใช้</button>
+              <button class="btn-reset-dd" onclick="resetRptFilter('rpt-mo-opt','rpt-mo-all','rpt-mo-lbl','ทั้งหมด','rpt-mo-dd')">รีเซ็ต</button>
+            </div>
           </div>
         </div>
       </div>
-      <span style="font-size:11px;color:#6B7A8D;">เลือกได้หลายเดือน — ดึงจากวันครบกำหนด</span>
+
+      <!-- Dropdown ปี -->
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span style="font-size:12px;color:#6B7A8D;">ปี</span>
+        <div class="dd-wrap">
+          <button class="dd-btn" style="min-width:120px;padding:7px 12px;font-size:13px;" onclick="toggleRptDD('rpt-yr-dd')">
+            <span id="rpt-yr-lbl">ทั้งหมด</span>
+            <span style="font-size:11px;color:#6B7A8D;">▾</span>
+          </button>
+          <div class="dd-panel" id="rpt-yr-dd" style="display:none;max-height:240px;overflow-y:auto;">
+            <div class="dd-item"><input type="checkbox" id="rpt-yr-all" checked onchange="rptToggleAll('rpt-yr-opt','rpt-yr-all')"> <label for="rpt-yr-all" style="cursor:pointer;">ทั้งหมด</label></div>
+            <div class="dd-sep"></div>
+            <div id="rpt-yr-opts"></div>
+            <div class="dd-footer">
+              <button class="btn-apply-dd" onclick="applyRptFilter('rpt-yr-lbl','rpt-yr-opt','ปี','rpt-yr-dd')">นำไปใช้</button>
+              <button class="btn-reset-dd" onclick="resetRptFilter('rpt-yr-opt','rpt-yr-all','rpt-yr-lbl','ทั้งหมด','rpt-yr-dd')">รีเซ็ต</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <span style="font-size:11px;color:#6B7A8D;">เลือกได้หลายรายการ</span>
     </div>
 
     <!-- Body -->
@@ -1147,17 +1271,20 @@ function openReport(){
   document.body.style.overflow='hidden';
   document.getElementById('report-date').textContent='ข้อมูล ณ '+new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
 
-  // build month options
-  const allRptMonths=new Set();
+  // build เดือน (01-12) และ ปี แยกกัน
+  const allMos=new Set(), allYrs=new Set();
   [...allData.invoice,...allData.outgoing,...allData.ar].forEach(r=>{
     const d=g(r,ci.duedate)||g(r,co.duedate)||g(r,ca.duedate);
-    const m=extractMonthYear(d); if(m) allRptMonths.add(m);
+    const my=extractMonthYear(d);
+    if(my){ const p=my.split('/'); allMos.add(p[0]); allYrs.add(p[1]); }
   });
-  const rptOpts=document.getElementById('rpt-month-opts');
-  if(rptOpts) rptOpts.innerHTML=[...allRptMonths].sort((a,b)=>{
-    const pa=a.split('/'),pb=b.split('/');
-    return parseInt(pa[1])!==parseInt(pb[1])?parseInt(pa[1])-parseInt(pb[1]):parseInt(pa[0])-parseInt(pb[0]);
-  }).map(m=>`<div class="dd-item"><input type="checkbox" class="rpt-mo" data-val="${m}" checked> <span>${m}</span></div>`).join('');
+  const moNames=['','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  const moOpts=document.getElementById('rpt-mo-opts');
+  if(moOpts) moOpts.innerHTML=[...allMos].sort((a,b)=>parseInt(a)-parseInt(b)).map(m=>
+    `<div class="dd-item"><input type="checkbox" class="rpt-mo-opt" data-val="${m}" checked> <span>${m} — ${moNames[parseInt(m)]||''}</span></div>`).join('');
+  const yrOpts=document.getElementById('rpt-yr-opts');
+  if(yrOpts) yrOpts.innerHTML=[...allYrs].sort((a,b)=>parseInt(a)-parseInt(b)).map(y=>
+    `<div class="dd-item"><input type="checkbox" class="rpt-yr-opt" data-val="${y}" checked> <span>${y}</span></div>`).join('');
 
   renderReport();
 }
@@ -1165,10 +1292,19 @@ function openReport(){
 function renderReport(){
   const ci=COL.invoice,co=COL.outgoing,ca=COL.ar;
 
-  // กรองตาม month ที่เลือก
-  const selMo=[...document.querySelectorAll('.rpt-mo:checked')].map(o=>o.dataset.val);
-  const allMo=[...document.querySelectorAll('.rpt-mo')].length;
-  const filterByMo=(rows,duecol)=>selMo.length===0||selMo.length===allMo?rows:rows.filter(r=>selMo.includes(extractMonthYear(g(r,duecol))));
+  // กรองตาม เดือน และ ปี แยกกัน
+  const selMos=[...document.querySelectorAll('.rpt-mo-opt:checked')].map(o=>o.dataset.val);
+  const allMoCount=[...document.querySelectorAll('.rpt-mo-opt')].length;
+  const selYrs=[...document.querySelectorAll('.rpt-yr-opt:checked')].map(o=>o.dataset.val);
+  const allYrCount=[...document.querySelectorAll('.rpt-yr-opt')].length;
+  const filterByMo=(rows,duecol)=>rows.filter(r=>{
+    const my=extractMonthYear(g(r,duecol));
+    if(!my)return true;
+    const p=my.split('/');
+    const moOk=selMos.length===0||selMos.length===allMoCount||selMos.includes(p[0]);
+    const yrOk=selYrs.length===0||selYrs.length===allYrCount||selYrs.includes(p[1]);
+    return moOk&&yrOk;
+  });
 
   const invRows=filterByMo(allData.invoice,ci.duedate);
   const outRows=filterByMo(allData.outgoing,co.duedate);
@@ -1343,25 +1479,28 @@ function renderReport(){
     }).join('');
 }
 
-function toggleRptDD(){
-  const p=document.getElementById('rpt-month-dd');
+function toggleRptDD(id){
+  const p=document.getElementById(id);
   const show=p.style.display==='none';
   document.querySelectorAll('.dd-panel').forEach(x=>x.style.display='none');
   if(show)p.style.display='block';
 }
-function rptToggleAllCB(cb){document.querySelectorAll('.rpt-mo').forEach(b=>b.checked=cb.checked);}
-function applyRptMonthDD(){
-  const opts=[...document.querySelectorAll('.rpt-mo')];
+function rptToggleAll(cls,allId){
+  const cb=document.getElementById(allId);
+  document.querySelectorAll('.'+cls).forEach(b=>b.checked=cb.checked);
+}
+function applyRptFilter(lblId,cls,prefix,ddId){
+  const opts=[...document.querySelectorAll('.'+cls)];
   const sel=opts.filter(o=>o.checked);
-  document.getElementById('rpt-dd-lbl').textContent=sel.length===0||sel.length===opts.length?'ทั้งหมด':sel.length+' เดือน';
-  document.getElementById('rpt-month-dd').style.display='none';
+  document.getElementById(lblId).textContent=sel.length===0||sel.length===opts.length?'ทั้งหมด':sel.length+' รายการ';
+  document.getElementById(ddId).style.display='none';
   renderReport();
 }
-function resetRptMonthDD(){
-  document.querySelectorAll('.rpt-mo').forEach(b=>b.checked=true);
-  const allCb=document.getElementById('rpt-all-cb');if(allCb)allCb.checked=true;
-  document.getElementById('rpt-dd-lbl').textContent='ทั้งหมด';
-  document.getElementById('rpt-month-dd').style.display='none';
+function resetRptFilter(cls,allId,lblId,def,ddId){
+  document.querySelectorAll('.'+cls).forEach(b=>b.checked=true);
+  const allCb=document.getElementById(allId);if(allCb)allCb.checked=true;
+  document.getElementById(lblId).textContent=def;
+  document.getElementById(ddId).style.display='none';
   renderReport();
 }
 function closeReport(){
