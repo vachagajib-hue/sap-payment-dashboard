@@ -705,7 +705,7 @@ function extractMonthYear(d) {
   const p = d.trim().split(sep);
   if(p.length < 3) return '';
   const yr = p[2].trim();
-  const mo = p[1].trim().padStart(2,'0');
+  const mo = String(parseInt(p[1].trim())).padStart(2,'0');
   // ปีต้องเป็น 4 หลัก
   if(yr.length !== 4 || isNaN(parseInt(yr))) return '';
   return mo + '/' + yr;
@@ -1586,21 +1586,29 @@ function applyHdrFilterToAllTabs(){
   ['invoice','outgoing','ar'].forEach(type=>filterByHdr(type));
 }
 function filterByHdr(type){
-  const selMo=[...document.querySelectorAll('.hdr-mo-opt:checked')].map(o=>o.dataset.val);
-  const allMo=document.querySelectorAll('.hdr-mo-opt').length;
-  const selYr=[...document.querySelectorAll('.hdr-yr-opt:checked')].map(o=>o.dataset.val);
-  const allYr=document.querySelectorAll('.hdr-yr-opt').length;
+  const allMoOpts=document.querySelectorAll('.hdr-mo-opt');
+  const allYrOpts=document.querySelectorAll('.hdr-yr-opt');
+  // ถ้ายังไม่ได้ build options = ไม่กรอง
+  if(allMoOpts.length===0&&allYrOpts.length===0){return;}
+  const selMo=[...allMoOpts].filter(o=>o.checked).map(o=>o.dataset.val);
+  const selYr=[...allYrOpts].filter(o=>o.checked).map(o=>o.dataset.val);
+  const allMo=allMoOpts.length;
+  const allYr=allYrOpts.length;
+  const moFilterAll=selMo.length===0||selMo.length===allMo;
+  const yrFilterAll=selYr.length===0||selYr.length===allYr;
   const rows=document.querySelectorAll('#body-'+type+' tr');
   let visible=0;
   rows.forEach(tr=>{
+    if(moFilterAll&&yrFilterAll){tr.style.display='';visible++;return;}
     const due=tr.querySelector('td:nth-child(3)');
     const dueText=due?due.textContent.trim():'';
     const sep=dueText.includes('.')?'.':'/';
     const p=dueText.split(sep);
-    const mo=p.length>=2?p[1]:'';
+    // dd.MM.yyyy → p[0]=dd, p[1]=MM, p[2]=yyyy
+    const mo=p.length>=3?p[1].padStart(2,'0'):'';
     const yr=p.length>=3?p[2]:'';
-    const moOk=selMo.length===0||selMo.length===allMo||selMo.includes(mo);
-    const yrOk=selYr.length===0||selYr.length===allYr||selYr.includes(yr);
+    const moOk=moFilterAll||selMo.includes(mo);
+    const yrOk=yrFilterAll||selYr.includes(yr);
     tr.style.display=(moOk&&yrOk)?'':'none';
     if(moOk&&yrOk)visible++;
   });
@@ -1615,9 +1623,10 @@ function buildHdrFilterOptions(){
     if(my){const p=my.split('/');months.add(p[0]);years.add(p[1]);}
   });
   const moCont=document.getElementById('hdr-mo-opts');
-  if(moCont)moCont.innerHTML=[...months].sort((a,b)=>parseInt(a)-parseInt(b)).map(m=>
-    `<div class="dd-item"><input type="checkbox" class="hdr-mo-opt" data-val="${m}" checked> <span>${m} — ${moNamesG[parseInt(m)]||''}</span></div>`
-  ).join('');
+  if(moCont)moCont.innerHTML=[...months].sort((a,b)=>parseInt(a)-parseInt(b)).map(m=>{
+    const mPad=m.padStart(2,'0');
+    return `<div class="dd-item"><input type="checkbox" class="hdr-mo-opt" data-val="${mPad}" checked> <span>${mPad} — ${moNamesG[parseInt(mPad)]||''}</span></div>`;
+  }).join('');
   const yrCont=document.getElementById('hdr-yr-opts');
   if(yrCont)yrCont.innerHTML=[...years].sort((a,b)=>parseInt(a)-parseInt(b)).map(y=>
     `<div class="dd-item"><input type="checkbox" class="hdr-yr-opt" data-val="${y}" checked> <span>${y}</span></div>`
