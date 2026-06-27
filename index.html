@@ -176,38 +176,24 @@
   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
     <span id="last-update" style="font-size:12px;opacity:.75;">กำลังโหลด...</span>
 
-    <!-- Filter เดือน -->
-    <div class="dd-wrap">
-      <button class="dd-btn" id="hdr-mo-btn" style="min-width:100px;padding:6px 10px;font-size:12px;background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff;" onclick="toggleHdrDD('hdr-mo-dd','hdr-mo-btn')">
-        <span id="hdr-mo-lbl">📅 เดือน</span>
-        <span style="font-size:11px;">▾</span>
-      </button>
-      <div class="dd-panel" id="hdr-mo-dd" style="display:none;max-height:220px;overflow-y:auto;right:0;left:auto;">
-        <div class="dd-item"><input type="checkbox" id="hdr-mo-all" checked onchange="tabDDToggleAll('hdr-mo-opt','hdr-mo-all')"> <label for="hdr-mo-all" style="cursor:pointer;">ทั้งหมด</label></div>
-        <div class="dd-sep"></div>
-        <div id="hdr-mo-opts"></div>
-        <div class="dd-footer">
-          <button class="btn-apply-dd" onclick="applyHdrFilter('hdr-mo-lbl','hdr-mo-opt','📅 เดือน','hdr-mo-dd','hdr-mo-btn')">นำไปใช้</button>
-          <button class="btn-reset-dd" onclick="resetHdrFilter('hdr-mo-opt','hdr-mo-all','hdr-mo-lbl','📅 เดือน','hdr-mo-dd','hdr-mo-btn')">รีเซ็ต</button>
-        </div>
-      </div>
+    <!-- Filter เดือน — select multiple แบบง่าย -->
+    <div style="display:flex;align-items:center;gap:4px;">
+      <span style="font-size:12px;color:rgba(255,255,255,.8);">เดือน</span>
+      <select id="hdr-mo-sel" multiple size="1" onchange="onHdrFilterChange()"
+        style="padding:5px 8px;border:1px solid rgba(255,255,255,.4);border-radius:6px;background:rgba(255,255,255,.15);color:#fff;font-family:'Sarabun',sans-serif;font-size:12px;min-width:110px;max-height:32px;cursor:pointer;"
+        title="กด Ctrl+Click เลือกหลายเดือน">
+        <option value="" disabled style="color:#333;">เลือกเดือน...</option>
+      </select>
     </div>
 
     <!-- Filter ปี -->
-    <div class="dd-wrap">
-      <button class="dd-btn" id="hdr-yr-btn" style="min-width:90px;padding:6px 10px;font-size:12px;background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff;" onclick="toggleHdrDD('hdr-yr-dd','hdr-yr-btn')">
-        <span id="hdr-yr-lbl">📅 ปี</span>
-        <span style="font-size:11px;">▾</span>
-      </button>
-      <div class="dd-panel" id="hdr-yr-dd" style="display:none;max-height:220px;overflow-y:auto;right:0;left:auto;">
-        <div class="dd-item"><input type="checkbox" id="hdr-yr-all" checked onchange="tabDDToggleAll('hdr-yr-opt','hdr-yr-all')"> <label for="hdr-yr-all" style="cursor:pointer;">ทั้งหมด</label></div>
-        <div class="dd-sep"></div>
-        <div id="hdr-yr-opts"></div>
-        <div class="dd-footer">
-          <button class="btn-apply-dd" onclick="applyHdrFilter('hdr-yr-lbl','hdr-yr-opt','📅 ปี','hdr-yr-dd','hdr-yr-btn')">นำไปใช้</button>
-          <button class="btn-reset-dd" onclick="resetHdrFilter('hdr-yr-opt','hdr-yr-all','hdr-yr-lbl','📅 ปี','hdr-yr-dd','hdr-yr-btn')">รีเซ็ต</button>
-        </div>
-      </div>
+    <div style="display:flex;align-items:center;gap:4px;">
+      <span style="font-size:12px;color:rgba(255,255,255,.8);">ปี</span>
+      <select id="hdr-yr-sel" multiple size="1" onchange="onHdrFilterChange()"
+        style="padding:5px 8px;border:1px solid rgba(255,255,255,.4);border-radius:6px;background:rgba(255,255,255,.15);color:#fff;font-family:'Sarabun',sans-serif;font-size:12px;min-width:100px;max-height:32px;cursor:pointer;"
+        title="กด Ctrl+Click เลือกหลายปี">
+        <option value="" disabled style="color:#333;">เลือกปี...</option>
+      </select>
     </div>
 
     <!-- ปุ่มล้างตัวกรอง -->
@@ -867,16 +853,20 @@ function applyFilters(type) {
 
     let matchH = true;
     if (selMo.length > 0 || selYr.length > 0) {
-      const due = tr.querySelector('td:nth-child(3)');
-      const dt  = due ? due.textContent.trim() : '';
-      const sep = dt.includes('.') ? '.' : '/';
-      const p   = dt.split(sep);
-      // dd.MM.yyyy => p[0]=dd, p[1]=MM, p[2]=yyyy
-      const mo  = p.length>=3 ? p[1].padStart(2,'0') : '';
-      const yr  = p.length>=3 ? p[2] : '';
-      const moOk = selMo.length===0 || selMo.includes(mo);
-      const yrOk = selYr.length===0 || selYr.includes(yr);
-      matchH = moOk && yrOk;
+      // __none__ = ไม่มีรายการที่ตรง
+      if(selMo[0]==='__none__' || selYr[0]==='__none__'){ matchH=false; }
+      else {
+        const due = tr.querySelector('td:nth-child(3)');
+        const dt  = due ? due.textContent.trim() : '';
+        const sep = dt.includes('.') ? '.' : '/';
+        const p   = dt.split(sep);
+        // dd.MM.yyyy => p[0]=dd, p[1]=MM, p[2]=yyyy
+        const mo  = p.length>=3 ? p[1].padStart(2,'0') : '';
+        const yr  = p.length>=3 ? p[2] : '';
+        const moOk = selMo.length===0 || selMo.includes(mo);
+        const yrOk = selYr.length===0 || selYr.includes(yr);
+        matchH = moOk && yrOk;
+      }
     }
 
     tr.style.display = matchS && matchT && matchH ? '' : 'none';
@@ -1598,13 +1588,13 @@ function resetHdrFilter(cls,allId,lblId,def,ddId,btnId){
   applyHdrFilterToAllTabs();
 }
 function clearAllHdrFilter(){
-  ['hdr-mo-opt','hdr-yr-opt'].forEach(cls=>{document.querySelectorAll('.'+cls).forEach(b=>b.checked=true);});
-  ['hdr-mo-all','hdr-yr-all'].forEach(id=>{const cb=document.getElementById(id);if(cb)cb.checked=true;});
-  document.getElementById('hdr-mo-lbl').textContent='📅 เดือน';
-  document.getElementById('hdr-yr-lbl').textContent='📅 ปี';
-  ['hdr-mo-btn','hdr-yr-btn'].forEach(id=>{const btn=document.getElementById(id);if(btn)btn.style.background='rgba(255,255,255,.15)';});
-  _saveHdrFilter();
-  applyHdrFilterToAllTabs();
+  const moSel=document.getElementById('hdr-mo-sel');
+  const yrSel=document.getElementById('hdr-yr-sel');
+  if(moSel)[...moSel.options].forEach(o=>o.selected=false);
+  if(yrSel)[...yrSel.options].forEach(o=>o.selected=false);
+  window._hdrMo=[];
+  window._hdrYr=[];
+  ['invoice','outgoing','ar'].forEach(type=>applyFilters(type));
 }
 function applyHdrFilterToAllTabs(){
   ['invoice','outgoing','ar'].forEach(type=>filterByHdr(type));
@@ -1618,30 +1608,52 @@ function buildHdrFilterOptions(){
   const months=new Set(),years=new Set();
   [...allData.invoice,...allData.outgoing,...allData.ar].forEach(r=>{
     const my=extractMonthYear(g(r,ci.duedate)||g(r,co.duedate)||g(r,ca.duedate));
-    if(my){const p=my.split('/');months.add(p[0]);years.add(p[1]);}
+    if(my){const p=my.split('/');months.add(p[0].padStart(2,'0'));years.add(p[1]);}
   });
-  const moCont=document.getElementById('hdr-mo-opts');
-  if(moCont)moCont.innerHTML=[...months].sort((a,b)=>parseInt(a)-parseInt(b)).map(m=>{
-    const mPad=m.padStart(2,'0');
-    return `<div class="dd-item"><input type="checkbox" class="hdr-mo-opt" data-val="${mPad}" checked> <span>${mPad} — ${moNamesG[parseInt(mPad)]||''}</span></div>`;
-  }).join('');
-  const yrCont=document.getElementById('hdr-yr-opts');
-  if(yrCont)yrCont.innerHTML=[...years].sort((a,b)=>parseInt(a)-parseInt(b)).map(y=>
-    `<div class="dd-item"><input type="checkbox" class="hdr-yr-opt" data-val="${y}" checked> <span>${y}</span></div>`
-  ).join('');
+
+  const moSel=document.getElementById('hdr-mo-sel');
+  if(moSel){
+    const cur=[...moSel.selectedOptions].map(o=>o.value);
+    moSel.innerHTML='';
+    [...months].sort((a,b)=>parseInt(a)-parseInt(b)).forEach(m=>{
+      const opt=document.createElement('option');
+      opt.value=m;
+      opt.textContent=m+' — '+(moNamesG[parseInt(m)]||'');
+      opt.style.color='#333';
+      moSel.appendChild(opt);
+    });
+  }
+
+  const yrSel=document.getElementById('hdr-yr-sel');
+  if(yrSel){
+    yrSel.innerHTML='';
+    [...years].sort((a,b)=>parseInt(a)-parseInt(b)).forEach(y=>{
+      const opt=document.createElement('option');
+      opt.value=y;
+      opt.textContent=y;
+      opt.style.color='#333';
+      yrSel.appendChild(opt);
+    });
+  }
 }
 // ปิด dropdown เมื่อคลิกข้างนอก
 document.addEventListener('click',e=>{
   if(!e.target.closest('.dd-wrap'))document.querySelectorAll('.dd-panel').forEach(p=>p.style.display='none');
 });
 function _saveHdrFilter(){
-  const allMoOpts=[...document.querySelectorAll('.hdr-mo-opt')];
-  const allYrOpts=[...document.querySelectorAll('.hdr-yr-opt')];
-  const selMo=allMoOpts.filter(o=>o.checked).map(o=>o.dataset.val);
-  const selYr=allYrOpts.filter(o=>o.checked).map(o=>o.dataset.val);
-  // ถ้าเลือกทั้งหมด = ไม่กรอง (empty array)
-  window._hdrMo = selMo.length===allMoOpts.length ? [] : selMo;
-  window._hdrYr = selYr.length===allYrOpts.length ? [] : selYr;
+  const moSel=document.getElementById('hdr-mo-sel');
+  const yrSel=document.getElementById('hdr-yr-sel');
+  const selMo=moSel?[...moSel.selectedOptions].map(o=>o.value):[];
+  const selYr=yrSel?[...yrSel.selectedOptions].map(o=>o.value):[];
+  const totalMo=moSel?moSel.options.length:0;
+  const totalYr=yrSel?yrSel.options.length:0;
+  // ไม่เลือก = แสดงทั้งหมด ([] = ไม่กรอง)
+  window._hdrMo = (selMo.length===0||selMo.length===totalMo) ? [] : selMo;
+  window._hdrYr = (selYr.length===0||selYr.length===totalYr) ? [] : selYr;
+}
+function onHdrFilterChange(){
+  _saveHdrFilter();
+  ['invoice','outgoing','ar'].forEach(type=>applyFilters(type));
 }
 window._hdrMo = [];
 window._hdrYr = [];
