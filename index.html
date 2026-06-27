@@ -854,15 +854,11 @@ function renderAR(rows) {
 
 function applyFilters(type) {
   const rows = document.querySelectorAll(`#body-${type} tr`);
-  const sf = currentFilter[type], st = currentSearch[type].toLowerCase();
+  const sf = currentFilter[type], st = (currentSearch[type]||'').toLowerCase();
 
-  // Header month/year filter
-  const allMoOpts = document.querySelectorAll('.hdr-mo-opt');
-  const allYrOpts = document.querySelectorAll('.hdr-yr-opt');
-  const selMo = [...allMoOpts].filter(o=>o.checked).map(o=>o.dataset.val);
-  const selYr = [...allYrOpts].filter(o=>o.checked).map(o=>o.dataset.val);
-  const moAll = allMoOpts.length===0 || selMo.length===allMoOpts.length;
-  const yrAll = allYrOpts.length===0 || selYr.length===allYrOpts.length;
+  // อ่าน Header month/year filter — ใช้ window.hdrSelMo/hdrSelYr ที่เก็บไว้แล้ว
+  const selMo = window._hdrMo || [];
+  const selYr = window._hdrYr || [];
 
   let visible = 0;
   rows.forEach(tr => {
@@ -870,14 +866,17 @@ function applyFilters(type) {
     const matchT = !st || (tr.dataset.search||'').includes(st);
 
     let matchH = true;
-    if (!moAll || !yrAll) {
+    if (selMo.length > 0 || selYr.length > 0) {
       const due = tr.querySelector('td:nth-child(3)');
       const dt  = due ? due.textContent.trim() : '';
       const sep = dt.includes('.') ? '.' : '/';
       const p   = dt.split(sep);
+      // dd.MM.yyyy => p[0]=dd, p[1]=MM, p[2]=yyyy
       const mo  = p.length>=3 ? p[1].padStart(2,'0') : '';
       const yr  = p.length>=3 ? p[2] : '';
-      matchH = (moAll || selMo.includes(mo)) && (yrAll || selYr.includes(yr));
+      const moOk = selMo.length===0 || selMo.includes(mo);
+      const yrOk = selYr.length===0 || selYr.includes(yr);
+      matchH = moOk && yrOk;
     }
 
     tr.style.display = matchS && matchT && matchH ? '' : 'none';
@@ -1584,6 +1583,8 @@ function applyHdrFilter(lblId,cls,prefix,ddId,btnId){
   const btn=document.getElementById(btnId);
   if(btn)btn.style.background=isAll?'rgba(255,255,255,.15)':'rgba(249,168,37,.8)';
   document.getElementById(ddId).style.display='none';
+  // save ค่าที่เลือกไว้ใน window global
+  _saveHdrFilter();
   applyHdrFilterToAllTabs();
 }
 function resetHdrFilter(cls,allId,lblId,def,ddId,btnId){
@@ -1593,6 +1594,7 @@ function resetHdrFilter(cls,allId,lblId,def,ddId,btnId){
   const btn=document.getElementById(btnId);
   if(btn)btn.style.background='rgba(255,255,255,.15)';
   document.getElementById(ddId).style.display='none';
+  _saveHdrFilter();
   applyHdrFilterToAllTabs();
 }
 function clearAllHdrFilter(){
@@ -1601,6 +1603,7 @@ function clearAllHdrFilter(){
   document.getElementById('hdr-mo-lbl').textContent='📅 เดือน';
   document.getElementById('hdr-yr-lbl').textContent='📅 ปี';
   ['hdr-mo-btn','hdr-yr-btn'].forEach(id=>{const btn=document.getElementById(id);if(btn)btn.style.background='rgba(255,255,255,.15)';});
+  _saveHdrFilter();
   applyHdrFilterToAllTabs();
 }
 function applyHdrFilterToAllTabs(){
@@ -1631,6 +1634,18 @@ function buildHdrFilterOptions(){
 document.addEventListener('click',e=>{
   if(!e.target.closest('.dd-wrap'))document.querySelectorAll('.dd-panel').forEach(p=>p.style.display='none');
 });
+function _saveHdrFilter(){
+  const allMoOpts=[...document.querySelectorAll('.hdr-mo-opt')];
+  const allYrOpts=[...document.querySelectorAll('.hdr-yr-opt')];
+  const selMo=allMoOpts.filter(o=>o.checked).map(o=>o.dataset.val);
+  const selYr=allYrOpts.filter(o=>o.checked).map(o=>o.dataset.val);
+  // ถ้าเลือกทั้งหมด = ไม่กรอง (empty array)
+  window._hdrMo = selMo.length===allMoOpts.length ? [] : selMo;
+  window._hdrYr = selYr.length===allYrOpts.length ? [] : selYr;
+}
+window._hdrMo = [];
+window._hdrYr = [];
+
 function closeReport(){
   document.getElementById('report-modal').style.display='none';
   document.body.style.overflow='';
