@@ -918,7 +918,7 @@ loadAll();
   <div style="min-height:100vh;">
 
     <!-- Header -->
-    <div style="background:#1565C0;color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:10;">
+    <div style="background:#1565C0;color:#fff;padding:13px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:10;">
       <div>
         <div style="font-size:18px;font-weight:700;">📊 รายงานสรุปผู้บริหาร — บริษัท รถเจาะไทย จำกัด</div>
         <div style="font-size:12px;opacity:.75;margin-top:1px;">ระบบติดตามบัญชีเจ้าหนี้และลูกหนี้การค้า</div>
@@ -930,9 +930,9 @@ loadAll();
       </div>
     </div>
 
-    <!-- Filter Bar — Dropdown ซ่อน -->
+    <!-- Filter Bar -->
     <div style="background:#fff;border-bottom:1px solid #E2E6EA;padding:9px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-      <span style="font-size:13px;font-weight:600;color:#6B7A8D;"><i class="ti ti-calendar" aria-hidden="true" style="font-size:15px;vertical-align:-2px;margin-right:4px;"></i> วันครบกำหนด</span>
+      <span style="font-size:13px;font-weight:600;color:#6B7A8D;"><i class="ti ti-calendar" aria-hidden="true" style="font-size:14px;vertical-align:-2px;margin-right:3px;"></i> วันครบกำหนด</span>
       <div class="dd-wrap">
         <button class="dd-btn" style="min-width:155px;padding:7px 12px;font-size:13px;" onclick="toggleRptDD()">
           <span id="rpt-dd-lbl">ทั้งหมด</span>
@@ -948,403 +948,399 @@ loadAll();
           </div>
         </div>
       </div>
-      <span style="font-size:11px;color:#6B7A8D;">เลือกได้หลายเดือน — ดึงจากวันครบกำหนด (คอลัมน์ D)</span>
+      <span style="font-size:11px;color:#6B7A8D;">เลือกได้หลายเดือน — ดึงจากวันครบกำหนด</span>
     </div>
 
     <!-- Body -->
-    <div style="padding:20px 24px;max-width:1400px;margin:0 auto;">
+    <div style="padding:16px 24px;max-width:1400px;margin:0 auto;">
 
-      <!-- KPI -->
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
-        <div style="background:#fff;border-radius:10px;padding:16px;border:1px solid #E2E6EA;border-top:3px solid #E53935;">
-          <div style="font-size:20px;color:#6B7A8D;font-weight:600;margin-bottom:8px;">AP เกินกำหนด</div>
+      <!-- AP KPI -->
+      <div style="font-size:11px;font-weight:700;color:#6B7A8D;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:5px;">
+        <i class="ti ti-arrow-up-circle" style="color:#1565C0;font-size:13px;" aria-hidden="true"></i> เจ้าหนี้การค้า (AP)
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:5px;">
+        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:14px 16px 10px;border-top:4px solid #1565C0;">
+          <div style="font-size:13px;font-weight:600;color:#6B7A8D;margin-bottom:8px;">เกินกำหนดชำระ</div>
           <div id="rpt-ap-overdue" style="font-size:28px;font-weight:700;color:#E53935;">—</div>
-          <div id="rpt-ap-overdue-pct" style="font-size:20px;color:#6B7A8D;margin-top:6px;">รายการ</div>
+          <div id="rpt-ap-overdue-pct" style="font-size:13px;color:#6B7A8D;margin-top:5px;">รายการ</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:9px;border-top:1px solid #E2E6EA;">
+            <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:#FFEBEE;color:#C62828;">เร่งด่วน</span>
+          </div>
         </div>
-        <div style="background:#fff;border-radius:10px;padding:16px;border:1px solid #E2E6EA;border-top:3px solid #F9A825;">
-          <div style="font-size:20px;color:#6B7A8D;font-weight:600;margin-bottom:8px;">AP ครบกำหนดวันนี้</div>
+        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:14px 16px 10px;border-top:4px solid #1565C0;">
+          <div style="font-size:13px;font-weight:600;color:#6B7A8D;margin-bottom:8px;">ครบกำหนดวันนี้</div>
           <div id="rpt-ap-today" style="font-size:28px;font-weight:700;color:#F9A825;">—</div>
-          <div style="font-size:20px;color:#6B7A8D;margin-top:6px;">รายการ</div>
-        </div>
-        <div style="background:#fff;border-radius:10px;padding:16px;border:1px solid #E2E6EA;border-top:3px solid #1565C0;">
-          <div style="font-size:20px;color:#6B7A8D;font-weight:600;margin-bottom:8px;">ยอดค้างจ่าย (AP)</div>
-          <div id="rpt-total-ap" style="font-size:28px;font-weight:700;color:#1565C0;">—</div>
-          <div style="font-size:20px;color:#6B7A8D;margin-top:6px;">บาท</div>
-        </div>
-        <div style="background:#fff;border-radius:10px;padding:16px;border:1px solid #E2E6EA;border-top:3px solid #2E7D32;">
-          <div style="font-size:20px;color:#6B7A8D;font-weight:600;margin-bottom:8px;">ยอดค้างรับ (AR)</div>
-          <div id="rpt-total-ar" style="font-size:28px;font-weight:700;color:#2E7D32;">—</div>
-          <div style="font-size:20px;color:#6B7A8D;margin-top:6px;">บาท</div>
-        </div>
-      </div>
-
-      <!-- Charts -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
-        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:16px;">
-          <div style="font-size:15px;font-weight:700;color:#1565C0;margin-bottom:2px;">📊 AP — ยอดค้างชำระแยกช่วงวัน</div>
-          <div style="font-size:13px;color:#6B7A8D;margin-bottom:10px;">ยอดเงิน (บาท) และ % คิดจากยอดค้างรวม AP</div>
-          <div style="position:relative;height:200px;"><canvas id="rpt-ch-ap" role="img" aria-label="กราฟ AP Aging">AP Aging Chart</canvas></div>
-        </div>
-        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:16px;">
-          <div style="font-size:15px;font-weight:700;color:#2E7D32;margin-bottom:2px;">📊 AR — ยอดค้างรับแยกช่วงวัน</div>
-          <div style="font-size:13px;color:#6B7A8D;margin-bottom:10px;">ยอดเงิน (บาท) และ % คิดจากยอดค้างรวม AR</div>
-          <div style="position:relative;height:200px;"><canvas id="rpt-ch-ar" role="img" aria-label="กราฟ AR Aging">AR Aging Chart</canvas></div>
-        </div>
-      </div>
-
-      <!-- ตารางเจ้าหนี้ -->
-      <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:16px;margin-bottom:14px;overflow:hidden;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-          <div style="font-size:13px;font-weight:700;color:#1565C0;border-left:4px solid #1565C0;padding-left:9px;border-radius:0;">⬆️ เจ้าหนี้ค้างชำระ — เรียงจากนานที่สุด</div>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-            <div style="position:relative;display:inline-block;">
-              <span style="font-size:12px;color:#6B7A8D;margin-right:4px;">เดือน/ปี</span>
-              <select id="ap-month-sel" multiple size="5" style="padding:4px 8px;border:1px solid #E2E6EA;border-radius:6px;font-size:12px;font-family:'Sarabun',sans-serif;min-width:130px;max-height:120px;"></select>
-            </div>
-            <div style="position:relative;display:inline-block;">
-              <span style="font-size:12px;color:#6B7A8D;margin-right:4px;">สถานะ</span>
-              <div style="border:1px solid #E2E6EA;border-radius:6px;padding:4px 8px;background:#fff;font-size:12px;min-width:120px;">
-                <label style="display:block;padding:2px 0;cursor:pointer;"><input type="checkbox" id="ap-st-all" checked onchange="apStAll(this)"> ทั้งหมด</label>
-                <label style="display:block;padding:2px 0;cursor:pointer;"><input type="checkbox" class="ap-st" value="Overdue" checked> เกินกำหนด</label>
-                <label style="display:block;padding:2px 0;cursor:pointer;"><input type="checkbox" class="ap-st" value="Today" checked> วันนี้</label>
-                <label style="display:block;padding:2px 0;cursor:pointer;"><input type="checkbox" class="ap-st" value="Upcoming" checked> ยังไม่ถึง</label>
-              </div>
-            </div>
-            <button onclick="renderApTable()" style="background:#1565C0;color:#fff;border:none;padding:7px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:'Sarabun',sans-serif;font-weight:600;">กรอง</button>
+          <div id="rpt-ap-today-pct" style="font-size:13px;color:#6B7A8D;margin-top:5px;">รายการ</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:9px;border-top:1px solid #E2E6EA;">
+            <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:#FFF8E1;color:#E65100;">ดำเนินการด่วน</span>
           </div>
         </div>
-        <div style="overflow-x:auto;">
-          <table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;">
-            <colgroup><col style="width:4%"><col style="width:26%"><col style="width:12%"><col style="width:10%"><col style="width:9%"><col style="width:10%"><col style="width:14%"><col style="width:15%"></colgroup>
-            <thead><tr style="background:#F5F7FA;">
-              <th style="padding:8px 10px;text-align:left;font-size:11px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">#</th>
-              <th style="padding:8px 10px;text-align:left;font-size:11px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">ชื่อเจ้าหนี้</th>
-              <th style="padding:8px 10px;text-align:left;font-size:11px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">เลขที่เอกสาร</th>
-              <th style="padding:8px 10px;text-align:left;font-size:11px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">วันครบกำหนด</th>
-              <th style="padding:8px 10px;text-align:right;font-size:11px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">ค้างมา(วัน)</th>
-              <th style="padding:8px 10px;text-align:left;font-size:11px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">สถานะ</th>
-              <th style="padding:8px 10px;text-align:right;font-size:11px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">ยอดค้างจ่าย (บาท)</th>
-              <th style="padding:8px 10px;text-align:right;font-size:11px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">% ของทั้งหมด</th>
-            </tr></thead>
-            <tbody id="rpt-ap-body"></tbody>
-          </table>
-        </div>
-        <div style="font-size:10px;color:#6B7A8D;margin-top:8px;text-align:right;">Ctrl+Click เพื่อเลือกหลายรายการในตัวกรอง</div>
-      </div>
-
-      <!-- ตารางลูกหนี้ -->
-      <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:16px;overflow:hidden;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-          <div style="font-size:13px;font-weight:700;color:#2E7D32;border-left:4px solid #2E7D32;padding-left:9px;border-radius:0;">⬇️ ลูกหนี้ค้างรับ — เรียงจากนานที่สุด</div>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-            <div style="position:relative;display:inline-block;">
-              <span style="font-size:12px;color:#6B7A8D;margin-right:4px;">เดือน/ปี</span>
-              <select id="ar-month-sel" multiple size="5" style="padding:4px 8px;border:1px solid #E2E6EA;border-radius:6px;font-size:12px;font-family:'Sarabun',sans-serif;min-width:130px;max-height:120px;"></select>
-            </div>
-            <div style="position:relative;display:inline-block;">
-              <span style="font-size:12px;color:#6B7A8D;margin-right:4px;">สถานะ</span>
-              <div style="border:1px solid #E2E6EA;border-radius:6px;padding:4px 8px;background:#fff;font-size:12px;min-width:120px;">
-                <label style="display:block;padding:2px 0;cursor:pointer;"><input type="checkbox" id="ar-st-all" checked onchange="arStAll(this)"> ทั้งหมด</label>
-                <label style="display:block;padding:2px 0;cursor:pointer;"><input type="checkbox" class="ar-st" value="Overdue" checked> เกินกำหนด</label>
-                <label style="display:block;padding:2px 0;cursor:pointer;"><input type="checkbox" class="ar-st" value="Today" checked> วันนี้</label>
-                <label style="display:block;padding:2px 0;cursor:pointer;"><input type="checkbox" class="ar-st" value="Upcoming" checked> ยังไม่ถึง</label>
-              </div>
-            </div>
-            <button onclick="renderArTable()" style="background:#2E7D32;color:#fff;border:none;padding:7px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:'Sarabun',sans-serif;font-weight:600;">กรอง</button>
+        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:14px 16px 10px;border-top:4px solid #1565C0;">
+          <div style="font-size:13px;font-weight:600;color:#6B7A8D;margin-bottom:8px;">ยังไม่ถึงกำหนดชำระ</div>
+          <div id="rpt-ap-upcoming" style="font-size:28px;font-weight:700;color:#2E7D32;">—</div>
+          <div id="rpt-ap-upcoming-pct" style="font-size:13px;color:#6B7A8D;margin-top:5px;">รายการ</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:9px;border-top:1px solid #E2E6EA;">
+            <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:#E8F5E9;color:#1B5E20;">ยังไม่ถึง</span>
           </div>
         </div>
-        <div style="overflow-x:auto;">
-          <table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;">
-            <colgroup><col style="width:4%"><col style="width:26%"><col style="width:12%"><col style="width:10%"><col style="width:9%"><col style="width:10%"><col style="width:14%"><col style="width:15%"></colgroup>
-            <thead><tr style="background:#F5F7FA;">
-              <th style="padding:8px 10px;text-align:left;font-size:11px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">#</th>
-              <th style="padding:8px 10px;text-align:left;font-size:11px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">ชื่อลูกค้า</th>
-              <th style="padding:8px 10px;text-align:left;font-size:11px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">เลขที่เอกสาร</th>
-              <th style="padding:8px 10px;text-align:left;font-size:11px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">วันครบกำหนด</th>
-              <th style="padding:8px 10px;text-align:right;font-size:11px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">ค้างมา(วัน)</th>
-              <th style="padding:8px 10px;text-align:left;font-size:11px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">สถานะ</th>
-              <th style="padding:8px 10px;text-align:right;font-size:11px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">ยอดค้างรับ (บาท)</th>
-              <th style="padding:8px 10px;text-align:right;font-size:11px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">% ของทั้งหมด</th>
-            </tr></thead>
-            <tbody id="rpt-ar-body"></tbody>
-          </table>
+        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:14px 16px 10px;border-top:4px solid #1565C0;">
+          <div style="font-size:13px;font-weight:600;color:#6B7A8D;margin-bottom:8px;">ยอดค้างจ่ายรวม (THB)</div>
+          <div id="rpt-total-ap" style="font-size:19px;font-weight:700;color:#1565C0;">—</div>
+          <div style="font-size:13px;color:#6B7A8D;margin-top:5px;">Invoice + Outgoing</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:9px;border-top:1px solid #E2E6EA;">
+            <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:#E3F2FD;color:#0D47A1;">AP รวม</span>
+          </div>
         </div>
-        <div style="font-size:10px;color:#6B7A8D;margin-top:8px;text-align:right;">Ctrl+Click เพื่อเลือกหลายรายการในตัวกรอง</div>
+      </div>
+
+      <div style="height:1px;background:#E2E6EA;margin:5px 0 12px;"></div>
+
+      <!-- AR KPI -->
+      <div style="font-size:11px;font-weight:700;color:#6B7A8D;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:5px;">
+        <i class="ti ti-arrow-down-circle" style="color:#2E7D32;font-size:13px;" aria-hidden="true"></i> ลูกหนี้การค้า (AR)
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;">
+        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:14px 16px 10px;border-top:4px solid #2E7D32;">
+          <div style="font-size:13px;font-weight:600;color:#6B7A8D;margin-bottom:8px;">เกินกำหนดรับชำระ</div>
+          <div id="rpt-ar-overdue" style="font-size:28px;font-weight:700;color:#E53935;">—</div>
+          <div id="rpt-ar-overdue-pct" style="font-size:13px;color:#6B7A8D;margin-top:5px;">รายการ</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:9px;border-top:1px solid #E2E6EA;">
+            <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:#FFEBEE;color:#C62828;">ติดตามด่วน</span>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:14px 16px 10px;border-top:4px solid #2E7D32;">
+          <div style="font-size:13px;font-weight:600;color:#6B7A8D;margin-bottom:8px;">ครบกำหนดวันนี้</div>
+          <div id="rpt-ar-today" style="font-size:28px;font-weight:700;color:#F9A825;">—</div>
+          <div id="rpt-ar-today-pct" style="font-size:13px;color:#6B7A8D;margin-top:5px;">รายการ</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:9px;border-top:1px solid #E2E6EA;">
+            <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:#FFF8E1;color:#E65100;">ติดตามลูกค้า</span>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:14px 16px 10px;border-top:4px solid #2E7D32;">
+          <div style="font-size:13px;font-weight:600;color:#6B7A8D;margin-bottom:8px;">ยังไม่ถึงกำหนดรับ</div>
+          <div id="rpt-ar-upcoming" style="font-size:28px;font-weight:700;color:#2E7D32;">—</div>
+          <div id="rpt-ar-upcoming-pct" style="font-size:13px;color:#6B7A8D;margin-top:5px;">รายการ</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:9px;border-top:1px solid #E2E6EA;">
+            <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:#E8F5E9;color:#1B5E20;">ยังไม่ถึง</span>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:14px 16px 10px;border-top:4px solid #2E7D32;">
+          <div style="font-size:13px;font-weight:600;color:#6B7A8D;margin-bottom:8px;">ยอดค้างรับรวม (THB)</div>
+          <div id="rpt-total-ar" style="font-size:19px;font-weight:700;color:#2E7D32;">—</div>
+          <div style="font-size:13px;color:#6B7A8D;margin-top:5px;">AR Invoice</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:9px;border-top:1px solid #E2E6EA;">
+            <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:#E8F5E9;color:#1B5E20;">AR รวม</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cash Position สุทธิ -->
+      <div style="font-size:11px;font-weight:700;color:#6B7A8D;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:5px;">
+        <i class="ti ti-cash" style="color:#6B7A8D;font-size:13px;" aria-hidden="true"></i> สรุป Cash Position สุทธิ
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:14px 16px;text-align:center;border-top:4px solid #1565C0;">
+          <div style="font-size:12px;color:#6B7A8D;margin-bottom:6px;">ยอดค้างจ่าย (AP)</div>
+          <div id="cf-ap" style="font-size:22px;font-weight:700;color:#E53935;">—</div>
+          <div style="font-size:11px;color:#6B7A8D;margin-top:4px;">ต้องจ่ายออก</div>
+        </div>
+        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:14px 16px;text-align:center;border-top:4px solid #2E7D32;">
+          <div style="font-size:12px;color:#6B7A8D;margin-bottom:6px;">ยอดค้างรับ (AR)</div>
+          <div id="cf-ar" style="font-size:22px;font-weight:700;color:#2E7D32;">—</div>
+          <div style="font-size:11px;color:#6B7A8D;margin-top:4px;">รอรับเข้า</div>
+        </div>
+        <div id="cf-net-card" style="background:#FFF5F5;border-radius:10px;border:1px solid #FFCDD2;padding:14px 16px;text-align:center;border-top:4px solid #E53935;">
+          <div style="font-size:12px;color:#6B7A8D;margin-bottom:6px;">Net Position (AP - AR)</div>
+          <div id="cf-net" style="font-size:20px;font-weight:700;color:#E53935;">—</div>
+          <div id="cf-net-lbl" style="font-size:11px;color:#E53935;margin-top:4px;">⚠️ ต้องหาเงินมาจ่ายเพิ่ม</div>
+        </div>
+      </div>
+
+      <!-- กราฟ Aging -->
+      <div style="font-size:11px;font-weight:700;color:#6B7A8D;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:5px;">
+        <i class="ti ti-chart-bar" style="color:#6B7A8D;font-size:13px;" aria-hidden="true"></i> วิเคราะห์ช่วงวันค้างชำระ (Aging Analysis)
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">
+        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:14px;">
+          <div style="font-size:12px;font-weight:700;color:#1565C0;margin-bottom:2px;">📊 AP — แยกช่วงวัน</div>
+          <div style="font-size:10px;color:#6B7A8D;margin-bottom:8px;">ยอดเงิน (บาท) และ %</div>
+          <div style="position:relative;height:170px;"><canvas id="rpt-ch-ap" role="img" aria-label="AP Aging">AP Aging Chart</canvas></div>
+        </div>
+        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:14px;">
+          <div style="font-size:12px;font-weight:700;color:#2E7D32;margin-bottom:2px;">📊 AR — แยกช่วงวัน</div>
+          <div style="font-size:10px;color:#6B7A8D;margin-bottom:8px;">ยอดเงิน (บาท) และ %</div>
+          <div style="position:relative;height:170px;"><canvas id="rpt-ch-ar" role="img" aria-label="AR Aging">AR Aging Chart</canvas></div>
+        </div>
+        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:14px;">
+          <div style="font-size:12px;font-weight:700;color:#6B7A8D;margin-bottom:2px;">🍩 สัดส่วน AP vs AR</div>
+          <div style="font-size:10px;color:#6B7A8D;margin-bottom:8px;">เปรียบเทียบยอดรวม</div>
+          <div style="position:relative;height:140px;"><canvas id="rpt-ch-donut" role="img" aria-label="AP AR Donut">Donut</canvas></div>
+          <div style="display:flex;gap:10px;margin-top:8px;font-size:10px;color:#6B7A8D;justify-content:center;">
+            <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#1565C0;margin-right:3px;"></span>AP</span>
+            <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#2E7D32;margin-right:3px;"></span>AR</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top 10 -->
+      <div style="font-size:11px;font-weight:700;color:#6B7A8D;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:5px;">
+        <i class="ti ti-list" style="color:#6B7A8D;font-size:13px;" aria-hidden="true"></i> Top 10 ยอดค้างสูงสุด
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:14px;">
+          <div style="font-size:12px;font-weight:700;color:#1565C0;border-left:4px solid #1565C0;padding-left:8px;margin-bottom:10px;">⬆️ Top 10 เจ้าหนี้ค้างจ่ายสูงสุด</div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:11px;">
+              <thead><tr style="background:#F5F7FA;">
+                <th style="padding:6px 8px;text-align:left;font-size:10px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">#</th>
+                <th style="padding:6px 8px;text-align:left;font-size:10px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">ชื่อเจ้าหนี้</th>
+                <th style="padding:6px 8px;text-align:right;font-size:10px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">ยอดค้างจ่าย (บาท)</th>
+                <th style="padding:6px 8px;text-align:right;font-size:10px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">%</th>
+              </tr></thead>
+              <tbody id="rpt-top-ap"></tbody>
+            </table>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:14px;">
+          <div style="font-size:12px;font-weight:700;color:#2E7D32;border-left:4px solid #2E7D32;padding-left:8px;margin-bottom:10px;">⬇️ Top 10 ลูกหนี้ค้างรับสูงสุด</div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:11px;">
+              <thead><tr style="background:#F5F7FA;">
+                <th style="padding:6px 8px;text-align:left;font-size:10px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">#</th>
+                <th style="padding:6px 8px;text-align:left;font-size:10px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">ชื่อลูกค้า</th>
+                <th style="padding:6px 8px;text-align:right;font-size:10px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">ยอดค้างรับ (บาท)</th>
+                <th style="padding:6px 8px;text-align:right;font-size:10px;color:#6B7A8D;border-bottom:1px solid #E2E6EA;">%</th>
+              </tr></thead>
+              <tbody id="rpt-top-ar"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- รายการเร่งด่วน >1 ปี -->
+      <div style="font-size:11px;font-weight:700;color:#E53935;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:5px;">
+        <i class="ti ti-alert-triangle" style="font-size:13px;" aria-hidden="true"></i> รายการเร่งด่วน — ค้างชำระนานกว่า 1 ปี (ต้องตัดสินใจ)
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:14px;">
+          <div style="font-size:12px;font-weight:700;color:#C62828;border-left:4px solid #E53935;padding-left:8px;margin-bottom:10px;">⬆️ เจ้าหนี้ค้างจ่าย &gt;1 ปี — Top 5</div>
+          <div id="rpt-urgent-ap"></div>
+        </div>
+        <div style="background:#fff;border-radius:10px;border:1px solid #E2E6EA;padding:14px;">
+          <div style="font-size:12px;font-weight:700;color:#1B5E20;border-left:4px solid #2E7D32;padding-left:8px;margin-bottom:10px;">⬇️ ลูกหนี้ค้างรับ &gt;1 ปี — Top 5</div>
+          <div id="rpt-urgent-ar"></div>
+        </div>
       </div>
 
     </div>
   </div>
 </div>
 
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-let rptChAP=null,rptChAR=null;
+let rptChAP=null,rptChAR=null,rptChDonut=null;
 
 function openReport(){
   const ci=COL.invoice,co=COL.outgoing,ca=COL.ar;
   document.getElementById('report-modal').style.display='block';
-  buildDashMonthOptions();
   document.body.style.overflow='hidden';
   document.getElementById('report-date').textContent='ข้อมูล ณ '+new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
 
-  // สร้าง month options สำหรับ report filter
-  const allRptMonths = new Set();
-  [...allData.invoice, ...allData.outgoing, ...allData.ar].forEach(r => {
-    const d = g(r,ci.duedate)||g(r,co.duedate)||g(r,ca.duedate);
-    const mR=extractMonthYear(d);if(mR)allRptMonths.add(mR);
+  // build month options
+  const allRptMonths=new Set();
+  [...allData.invoice,...allData.outgoing,...allData.ar].forEach(r=>{
+    const d=g(r,ci.duedate)||g(r,co.duedate)||g(r,ca.duedate);
+    const m=extractMonthYear(d); if(m) allRptMonths.add(m);
   });
-  const rptOpts = document.getElementById('rpt-month-opts');
-  if(rptOpts) rptOpts.innerHTML = [...allRptMonths].sort().reverse().slice(0,36).map(m=>
-    `<div class="dd-item"><input type="checkbox" class="rpt-mo" data-val="${m}" checked> <span>${m}</span></div>`
-  ).join('');
-
-  // สร้าง month options สำหรับ AP table
-  const apMonths=new Set();
-  allData.invoice.forEach(r=>{const m=extractMonthYear(g(r,ci.duedate));if(m)apMonths.add(m);});
-  const apMSel=document.getElementById('ap-month-sel');
-  if(apMSel){apMSel.innerHTML='<option value="all" selected>ทั้งหมด</option>';
-  [...apMonths].sort().reverse().slice(0,24).forEach(m=>{apMSel.innerHTML+=`<option value="${m}">${m}</option>`;});}
-
-  const arMonths=new Set();
-  allData.ar.forEach(r=>{const m=extractMonthYear(g(r,ca.duedate));if(m)arMonths.add(m);});
-  const arMSel=document.getElementById('ar-month-sel');
-  if(arMSel){arMSel.innerHTML='<option value="all" selected>ทั้งหมด</option>';
-  [...arMonths].sort().reverse().slice(0,24).forEach(m=>{arMSel.innerHTML+=`<option value="${m}">${m}</option>`;});}
+  const rptOpts=document.getElementById('rpt-month-opts');
+  if(rptOpts) rptOpts.innerHTML=[...allRptMonths].sort((a,b)=>{
+    const pa=a.split('/'),pb=b.split('/');
+    return parseInt(pa[1])!==parseInt(pb[1])?parseInt(pa[1])-parseInt(pb[1]):parseInt(pa[0])-parseInt(pb[0]);
+  }).map(m=>`<div class="dd-item"><input type="checkbox" class="rpt-mo" data-val="${m}" checked> <span>${m}</span></div>`).join('');
 
   renderReport();
 }
 
 function renderReport(){
   const ci=COL.invoice,co=COL.outgoing,ca=COL.ar;
-  const apSt=[...allData.invoice.map(r=>g(r,ci.status)),...allData.outgoing.map(r=>statusFromDays(parseInt(g(r,co.daysleft))))];
-  const ovCnt=apSt.filter(s=>s==='Overdue').length;
-  const tdCnt=apSt.filter(s=>s==='Today').length;
-  const tot=apSt.length||1;
-  document.getElementById('rpt-ap-overdue').textContent=ovCnt.toLocaleString('th-TH');
-  document.getElementById('rpt-ap-overdue-pct').textContent='รายการ ('+(ovCnt/tot*100).toFixed(1)+'%)';
-  document.getElementById('rpt-ap-today').textContent=tdCnt.toLocaleString();
-  const sumAP=allData.invoice.reduce((s,r)=>s+(parseFloat(g(r,ci.balance))||0),0)+allData.outgoing.reduce((s,r)=>s+(parseFloat(g(r,co.total))||0),0);
-  const sumAR=allData.ar.reduce((s,r)=>s+(parseFloat(g(r,ca.balance))||0),0);
+
+  // กรองตาม month ที่เลือก
+  const selMo=[...document.querySelectorAll('.rpt-mo:checked')].map(o=>o.dataset.val);
+  const allMo=[...document.querySelectorAll('.rpt-mo')].length;
+  const filterByMo=(rows,duecol)=>selMo.length===0||selMo.length===allMo?rows:rows.filter(r=>selMo.includes(extractMonthYear(g(r,duecol))));
+
+  const invRows=filterByMo(allData.invoice,ci.duedate);
+  const outRows=filterByMo(allData.outgoing,co.duedate);
+  const arRows =filterByMo(allData.ar,ca.duedate);
+
+  // AP status
+  const apSt=[
+    ...invRows.map(r=>g(r,ci.status)),
+    ...outRows.map(r=>{
+      const rd=parseDueDate(g(r,co.duedate));const now2=new Date();now2.setHours(0,0,0,0);
+      if(!rd)return'Upcoming';const d=Math.round((rd-now2)/86400000);
+      return d<0?'Overdue':d===0?'Today':'Upcoming';
+    })
+  ];
+  const apOv=apSt.filter(s=>s==='Overdue').length;
+  const apTd=apSt.filter(s=>s==='Today').length;
+  const apUp=apSt.filter(s=>s==='Upcoming').length;
+  const apTot=apSt.length||1;
+
+  document.getElementById('rpt-ap-overdue').textContent=apOv.toLocaleString('th-TH');
+  document.getElementById('rpt-ap-overdue-pct').textContent=`รายการ (${(apOv/apTot*100).toFixed(1)}%)`;
+  document.getElementById('rpt-ap-today').textContent=apTd.toLocaleString('th-TH');
+  document.getElementById('rpt-ap-today-pct').textContent=`รายการ (${(apTd/apTot*100).toFixed(1)}%)`;
+  document.getElementById('rpt-ap-upcoming').textContent=apUp.toLocaleString('th-TH');
+  document.getElementById('rpt-ap-upcoming-pct').textContent=`รายการ (${(apUp/apTot*100).toFixed(1)}%)`;
+
+  // AR status
+  const arSt=arRows.map(r=>g(r,ca.status));
+  const arOv=arSt.filter(s=>s==='Overdue').length;
+  const arTd=arSt.filter(s=>s==='Today').length;
+  const arUp=arSt.filter(s=>s==='Upcoming').length;
+  const arTot=arSt.length||1;
+
+  document.getElementById('rpt-ar-overdue').textContent=arOv.toLocaleString('th-TH');
+  document.getElementById('rpt-ar-overdue-pct').textContent=`รายการ (${(arOv/arTot*100).toFixed(1)}%)`;
+  document.getElementById('rpt-ar-today').textContent=arTd.toLocaleString('th-TH');
+  document.getElementById('rpt-ar-today-pct').textContent=`รายการ (${(arTd/arTot*100).toFixed(1)}%)`;
+  document.getElementById('rpt-ar-upcoming').textContent=arUp.toLocaleString('th-TH');
+  document.getElementById('rpt-ar-upcoming-pct').textContent=`รายการ (${(arUp/arTot*100).toFixed(1)}%)`;
+
+  // ยอดรวม
+  const sumAP=invRows.reduce((s,r)=>s+(parseFloat(g(r,ci.balance))||0),0)+outRows.reduce((s,r)=>s+(parseFloat(g(r,co.total))||0),0);
+  const sumAR=arRows.reduce((s,r)=>s+(parseFloat(g(r,ca.balance))||0),0);
   document.getElementById('rpt-total-ap').textContent=sumAP.toLocaleString('th-TH',{maximumFractionDigits:0});
   document.getElementById('rpt-total-ar').textContent=sumAR.toLocaleString('th-TH',{maximumFractionDigits:0});
 
-  function agingBucket(days){const d=Math.abs(days);if(d<=30)return 0;if(d<=90)return 1;if(d<=180)return 2;if(d<=365)return 3;return 4;}
+  // Cash Position
+  document.getElementById('cf-ap').textContent=sumAP.toLocaleString('th-TH',{maximumFractionDigits:0});
+  document.getElementById('cf-ar').textContent=sumAR.toLocaleString('th-TH',{maximumFractionDigits:0});
+  const net=sumAR-sumAP;
+  document.getElementById('cf-net').textContent=(net<0?'-':'')+Math.abs(net).toLocaleString('th-TH',{maximumFractionDigits:0});
+  document.getElementById('cf-net').style.color=net<0?'#E53935':'#2E7D32';
+  document.getElementById('cf-net-lbl').textContent=net<0?'⚠️ ต้องหาเงินมาจ่ายเพิ่ม':'✅ AR มากกว่า AP';
+  document.getElementById('cf-net-lbl').style.color=net<0?'#E53935':'#2E7D32';
+  document.getElementById('cf-net-card').style.background=net<0?'#FFF5F5':'#F0FDF4';
+  document.getElementById('cf-net-card').style.borderColor=net<0?'#FFCDD2':'#86EFAC';
+
+  // Aging buckets
+  function agingBucket(dueDateStr){
+    const rd=parseDueDate(dueDateStr); if(!rd)return-1;
+    const now2=new Date();now2.setHours(0,0,0,0);
+    const d=Math.round((now2-rd)/86400000);
+    if(d<0)return-1;
+    if(d<=30)return 0;if(d<=90)return 1;if(d<=180)return 2;if(d<=365)return 3;return 4;
+  }
+  const apBuckets=[0,0,0,0,0];
+  invRows.forEach(r=>{const b=agingBucket(g(r,ci.duedate));if(b>=0)apBuckets[b]+=parseFloat(g(r,ci.balance))||0;});
+  const arBuckets=[0,0,0,0,0];
+  arRows.forEach(r=>{const b=agingBucket(g(r,ca.duedate));if(b>=0)arBuckets[b]+=parseFloat(g(r,ca.balance))||0;});
+
+  const apBT=apBuckets.reduce((a,b)=>a+b,0)||1;
+  const arBT=arBuckets.reduce((a,b)=>a+b,0)||1;
+  const apPct=apBuckets.map(v=>+(v/apBT*100).toFixed(1));
+  const arPct=arBuckets.map(v=>+(v/arBT*100).toFixed(1));
   const aging=['0-30 วัน','31-90 วัน','91-180 วัน','181-365 วัน','>1 ปี'];
-
-  const apB=[0,0,0,0,0];
-  allData.invoice.filter(r=>g(r,ci.status)==='Overdue'||g(r,ci.status)==='Today').forEach(r=>{
-    const d=parseInt(g(r,ci.daysleft));if(!isNaN(d))apB[agingBucket(d)]+=parseFloat(g(r,ci.balance))||0;
-  });
-  const apBT=apB.reduce((a,b)=>a+b,0)||1;
-  const apPct=apB.map(v=>+(v/apBT*100).toFixed(1));
-
-  const arB=[0,0,0,0,0];
-  allData.ar.filter(r=>g(r,ca.status)==='Overdue'||g(r,ca.status)==='Today').forEach(r=>{
-    const d=parseInt(g(r,ca.daysleft));if(!isNaN(d))arB[agingBucket(d)]+=parseFloat(g(r,ca.balance))||0;
-  });
-  const arBT=arB.reduce((a,b)=>a+b,0)||1;
-  const arPct=arB.map(v=>+(v/arBT*100).toFixed(1));
-
-  const makePctPlugin=(pcts,col)=>({afterDatasetsDraw(chart){
+  const fmtTick=v=>{if(v>=1e9)return(v/1e9).toFixed(1)+'B';if(v>=1e6)return(v/1e6).toFixed(0)+'M';return v;};
+  const mkP=(pcts,col)=>({afterDatasetsDraw(chart){
     const{ctx}=chart;
     chart.getDatasetMeta(0).data.forEach((bar,i)=>{
       if(!pcts[i])return;
-      ctx.save();ctx.font='bold 13px Sarabun,sans-serif';ctx.fillStyle=col;ctx.textAlign='center';
-      ctx.fillText(pcts[i]+'%',bar.x,bar.y-4);ctx.restore();
+      ctx.save();ctx.font='bold 10px Sarabun,sans-serif';ctx.fillStyle=col;ctx.textAlign='center';
+      ctx.fillText(pcts[i]+'%',bar.x,bar.y-3);ctx.restore();
     });
   }});
 
   if(rptChAP)rptChAP.destroy();
   if(rptChAR)rptChAR.destroy();
+  if(rptChDonut)rptChDonut.destroy();
 
-  const fmtTick=v=>{if(v>=1e9)return(v/1e9).toFixed(1)+'B';if(v>=1e6)return(v/1e6).toFixed(0)+'M';return v;};
-
-  rptChAP=new Chart(document.getElementById('rpt-ch-ap'),{
-    type:'bar',
-    data:{labels:aging,datasets:[{data:apB,backgroundColor:['#90CAF9','#64B5F6','#42A5F5','#1976D2','#0D47A1'],borderRadius:4,borderSkipped:false}]},
+  rptChAP=new Chart(document.getElementById('rpt-ch-ap'),{type:'bar',
+    data:{labels:aging,datasets:[{data:apBuckets,backgroundColor:['#90CAF9','#64B5F6','#42A5F5','#1976D2','#0D47A1'],borderRadius:3}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'฿'+ctx.parsed.y.toLocaleString('th-TH',{maximumFractionDigits:0})+' ('+apPct[ctx.dataIndex]+'%)'}}},
-      scales:{x:{grid:{display:false},ticks:{font:{size:10},color:'#6B7A8D'}},y:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{font:{size:9},color:'#6B7A8D',callback:fmtTick}}}},
-    plugins:[makePctPlugin(apPct,'#1565C0')]
-  });
+      scales:{x:{grid:{display:false},ticks:{font:{size:9},color:'#6B7A8D'}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:8},color:'#6B7A8D',callback:fmtTick}}}},
+    plugins:[mkP(apPct,'#1565C0')]});
 
-  rptChAR=new Chart(document.getElementById('rpt-ch-ar'),{
-    type:'bar',
-    data:{labels:aging,datasets:[{data:arB,backgroundColor:['#A5D6A7','#81C784','#4CAF50','#388E3C','#1B5E20'],borderRadius:4,borderSkipped:false}]},
+  rptChAR=new Chart(document.getElementById('rpt-ch-ar'),{type:'bar',
+    data:{labels:aging,datasets:[{data:arBuckets,backgroundColor:['#A5D6A7','#81C784','#4CAF50','#388E3C','#1B5E20'],borderRadius:3}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'฿'+ctx.parsed.y.toLocaleString('th-TH',{maximumFractionDigits:0})+' ('+arPct[ctx.dataIndex]+'%)'}}},
-      scales:{x:{grid:{display:false},ticks:{font:{size:10},color:'#6B7A8D'}},y:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{font:{size:9},color:'#6B7A8D',callback:fmtTick}}}},
-    plugins:[makePctPlugin(arPct,'#2E7D32')]
-  });
+      scales:{x:{grid:{display:false},ticks:{font:{size:9},color:'#6B7A8D'}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:8},color:'#6B7A8D',callback:fmtTick}}}},
+    plugins:[mkP(arPct,'#2E7D32')]});
 
-  renderApTable();renderArTable();
-}
+  rptChDonut=new Chart(document.getElementById('rpt-ch-donut'),{type:'doughnut',
+    data:{labels:['AP','AR'],datasets:[{data:[sumAP,sumAR],backgroundColor:['#1565C0','#2E7D32'],borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'฿'+ctx.parsed.toLocaleString('th-TH',{maximumFractionDigits:0})+' ('+ctx.label+')'}}}}});
 
-function getSelectedMonth(sel){
-  const opts=[...sel.options].filter(o=>o.selected).map(o=>o.value);
-  return opts.includes('all')||opts.length===0?[]:opts;
-}
-function getCheckedStatus(cls){
-  const boxes=[...document.querySelectorAll('.'+cls)];
-  const vals=boxes.filter(b=>b.checked).map(b=>b.value);
-  return vals.length===boxes.length?[]:vals;
-}
-function apStAll(cb){document.querySelectorAll('.ap-st').forEach(b=>b.checked=cb.checked);}
-function arStAll(cb){document.querySelectorAll('.ar-st').forEach(b=>b.checked=cb.checked);}
+  // Top 10 AP
+  const apMap={};
+  invRows.forEach(r=>{const n=g(r,ci.vendorname);const v=parseFloat(g(r,ci.balance))||0;apMap[n]=(apMap[n]||0)+v;});
+  const top10ap=Object.entries(apMap).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const apSum=Object.values(apMap).reduce((a,b)=>a+b,0)||1;
+  document.getElementById('rpt-top-ap').innerHTML=top10ap.map(([n,v],i)=>`
+    <tr style="border-bottom:1px solid #E2E6EA;">
+      <td style="padding:5px 8px;color:#6B7A8D;">${i+1}</td>
+      <td style="padding:5px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px;">${n}</td>
+      <td style="padding:5px 8px;text-align:right;font-weight:500;">${v.toLocaleString('th-TH',{maximumFractionDigits:2})}</td>
+      <td style="padding:5px 8px;text-align:right;color:#E53935;font-weight:600;">${(v/apSum*100).toFixed(2)}%</td>
+    </tr>`).join('');
 
-// Dashboard filter
-function buildDashMonthOptions(){
-  const ci=COL.invoice,ca=COL.ar,co=COL.outgoing;
-  const months=new Set();
-  [...allData.invoice,...allData.outgoing,...allData.ar].forEach(r=>{
-    const d=g(r,ci.duedate)||g(r,co.duedate)||g(r,ca.duedate);
-    const mOld=extractMonthYear(d);if(mOld)months.add(mOld);
-  });
-  const container=document.getElementById('dash-month-opts');
-  if(!container)return;
-  container.innerHTML=[...months].sort().reverse().slice(0,36).map(m=>
-    `<div class="dd-item"><input type="checkbox" class="dm-opt" data-val="${m}" checked onchange="syncDmAll()"> <span>${m}</span></div>`
-  ).join('');
-}
-function syncDmAll(){
-  const opts=[...document.querySelectorAll('.dm-opt')];
-  const allCb=document.getElementById('dm-all');
-  if(allCb) allCb.checked=opts.every(o=>o.checked);
-}
-function applyDashFilter(){
-  const checkedOpts=[...document.querySelectorAll('.dm-opt:checked')];
-  const allOpts=[...document.querySelectorAll('.dm-opt')];
-  const months=checkedOpts.length===allOpts.length?[]:checkedOpts.map(o=>o.dataset.val);
-  ['invoice','outgoing','ar'].forEach(type=>{
-    const rows=document.querySelectorAll('#body-'+type+' tr');
-    rows.forEach(tr=>{
-      if(!months.length){tr.style.display='';return;}
-      const due=(tr.querySelector('td:nth-child(3)')||{}).textContent||'';
-      const mDue=extractMonthYear(due); const p=['','',''];
-      const m=p.length>=3?p[1]+'/'+p[2]:'';
-      tr.style.display=months.includes(m)?'':'none';
-    });
-    const visible=[...document.querySelectorAll('#body-'+type+' tr')].filter(r=>r.style.display!=='none').length;
-    const cnt=document.getElementById('count-'+type);
-    if(cnt)cnt.textContent=visible+' รายการ';
-  });
-}
-function resetDashFilter(){
-  ['invoice','outgoing','ar'].forEach(type=>{
-    document.querySelectorAll('#body-'+type+' tr').forEach(tr=>tr.style.display='');
-    const rows=document.querySelectorAll('#body-'+type+' tr').length;
-    const cnt=document.getElementById('count-'+type);
-    if(cnt)cnt.textContent=rows+' รายการ';
-  });
-}
+  // Top 10 AR
+  const arMap={};
+  arRows.forEach(r=>{const n=g(r,ca.custname);const v=parseFloat(g(r,ca.balance))||0;arMap[n]=(arMap[n]||0)+v;});
+  const top10ar=Object.entries(arMap).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const arSum=Object.values(arMap).reduce((a,b)=>a+b,0)||1;
+  document.getElementById('rpt-top-ar').innerHTML=top10ar.map(([n,v],i)=>`
+    <tr style="border-bottom:1px solid #E2E6EA;">
+      <td style="padding:5px 8px;color:#6B7A8D;">${i+1}</td>
+      <td style="padding:5px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px;">${n}</td>
+      <td style="padding:5px 8px;text-align:right;font-weight:500;">${v.toLocaleString('th-TH',{maximumFractionDigits:2})}</td>
+      <td style="padding:5px 8px;text-align:right;color:#2E7D32;font-weight:600;">${(v/arSum*100).toFixed(2)}%</td>
+    </tr>`).join('');
 
-function statusBadge(s){
-  if(s==='Overdue')return'<span style="background:#FFEBEE;color:#C62828;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;">เกินกำหนด</span>';
-  if(s==='Today')return'<span style="background:#FFF8E1;color:#B45309;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;">วันนี้</span>';
-  return'<span style="background:#E8F5E9;color:#1B5E20;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;">ยังไม่ถึง</span>';
-}
+  // Urgent >1 ปี AP
+  const urgAP=invRows.filter(r=>{
+    const rd=parseDueDate(g(r,ci.duedate));if(!rd)return false;
+    const now2=new Date();now2.setHours(0,0,0,0);
+    return Math.round((now2-rd)/86400000)>365;
+  }).sort((a,b)=>{
+    const ra=parseDueDate(g(a,ci.duedate)),rb=parseDueDate(g(b,ci.duedate));
+    return ra-rb;
+  }).slice(0,5);
+  document.getElementById('rpt-urgent-ap').innerHTML=urgAP.length===0
+    ?'<div style="text-align:center;padding:16px;color:#6B7A8D;font-size:12px;">ไม่มีรายการ</div>'
+    :urgAP.map(r=>{
+      const rd=parseDueDate(g(r,ci.duedate));const now2=new Date();now2.setHours(0,0,0,0);
+      const days=Math.round((now2-rd)/86400000);
+      return`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #F0F2F5;font-size:11px;">
+        <span style="font-weight:700;color:#E53935;min-width:60px;">${days.toLocaleString()} วัน</span>
+        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${g(r,ci.vendorname)}</span>
+        <span style="font-weight:600;color:#1565C0;white-space:nowrap;">${fmtNum(g(r,ci.balance))}</span>
+      </div>`;
+    }).join('');
 
-function renderApTable(){
-  const ci=COL.invoice;
-  const selM=getSelectedMonth(document.getElementById('ap-month-sel'));
-  const selS=getCheckedStatus('ap-st');
-  let rows=allData.invoice.sort((a,b)=>(parseInt(g(a,ci.daysleft))||0)-(parseInt(g(b,ci.daysleft))||0));
-  if(selM.length)rows=rows.filter(r=>selM.some(m=>m===extractMonthYear(g(r,ci.duedate))));
-  if(selS.length)rows=rows.filter(r=>selS.includes(g(r,ci.status)));
-  const sumB=rows.reduce((s,r)=>s+(parseFloat(g(r,ci.balance))||0),0)||1;
-  document.getElementById('rpt-ap-body').innerHTML=rows.slice(0,100).map((r,i)=>{
-    const d=parseInt(g(r,ci.daysleft));const bal=parseFloat(g(r,ci.balance))||0;
-    const pct=(bal/sumB*100).toFixed(3);const dc=d<0?'#E53935':d===0?'#F9A825':'#2E7D32';
-    return`<tr style="border-bottom:1px solid #E2E6EA;">
-      <td style="padding:8px 10px;color:#6B7A8D;">${i+1}</td>
-      <td style="padding:8px 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${g(r,ci.vendorname)}</td>
-      <td style="padding:8px 10px;white-space:nowrap;">${g(r,ci.docnum)}</td>
-      <td style="padding:8px 10px;white-space:nowrap;">${g(r,ci.duedate)}</td>
-      <td style="padding:8px 10px;text-align:right;font-weight:700;color:${dc};">${Math.abs(d)}</td>
-      <td style="padding:8px 10px;">${statusBadge(g(r,ci.status))}</td>
-      <td style="padding:8px 10px;text-align:right;font-weight:500;">${fmtNum(g(r,ci.balance))}</td>
-      <td style="padding:8px 10px;text-align:right;color:#E53935;font-weight:600;">${pct}%</td>
-    </tr>`;
-  }).join('')||'<tr><td colspan="8" style="padding:20px;text-align:center;color:#6B7A8D;">ไม่มีรายการ</td></tr>';
-}
-
-function renderArTable(){
-  const ca=COL.ar;
-  const selM=getSelectedMonth(document.getElementById('ar-month-sel'));
-  const selS=getCheckedStatus('ar-st');
-  let rows=allData.ar.sort((a,b)=>(parseInt(g(a,ca.daysleft))||0)-(parseInt(g(b,ca.daysleft))||0));
-  if(selM.length)rows=rows.filter(r=>selM.some(m=>m===extractMonthYear(g(r,ca.duedate))));
-  if(selS.length)rows=rows.filter(r=>selS.includes(g(r,ca.status)));
-  const sumB=rows.reduce((s,r)=>s+(parseFloat(g(r,ca.balance))||0),0)||1;
-  document.getElementById('rpt-ar-body').innerHTML=rows.slice(0,100).map((r,i)=>{
-    const d=parseInt(g(r,ca.daysleft));const bal=parseFloat(g(r,ca.balance))||0;
-    const pct=(bal/sumB*100).toFixed(3);const dc=d<0?'#E53935':d===0?'#F9A825':'#2E7D32';
-    return`<tr style="border-bottom:1px solid #E2E6EA;">
-      <td style="padding:8px 10px;color:#6B7A8D;">${i+1}</td>
-      <td style="padding:8px 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${g(r,ca.custname)}</td>
-      <td style="padding:8px 10px;white-space:nowrap;">${g(r,ca.docnum)}</td>
-      <td style="padding:8px 10px;white-space:nowrap;">${g(r,ca.duedate)}</td>
-      <td style="padding:8px 10px;text-align:right;font-weight:700;color:${dc};">${Math.abs(d)}</td>
-      <td style="padding:8px 10px;">${statusBadge(g(r,ca.status))}</td>
-      <td style="padding:8px 10px;text-align:right;font-weight:500;">${fmtNum(g(r,ca.balance))}</td>
-      <td style="padding:8px 10px;text-align:right;color:#2E7D32;font-weight:600;">${pct}%</td>
-    </tr>`;
-  }).join('')||'<tr><td colspan="8" style="padding:20px;text-align:center;color:#6B7A8D;">ไม่มีรายการ</td></tr>';
-}
-
-document.addEventListener('click', e => {
-  if(!e.target.closest('.dd-wrap')) document.querySelectorAll('.dd-panel').forEach(p => p.style.display='none');
-});
-
-// Tab Dropdown functions
-function toggleTabDD(id) {
-  const p = document.getElementById(id);
-  const show = p.style.display === 'none';
-  document.querySelectorAll('.dd-panel').forEach(x => x.style.display = 'none');
-  if(show) p.style.display = 'block';
-}
-function tabDDToggleAll(cls, allId) {
-  const cb = document.getElementById(allId);
-  document.querySelectorAll('.' + cls).forEach(b => b.checked = cb.checked);
-}
-
-
-
-function applyTabDD(type, lblId, cls, prefix, ddId) {
-  const opts = [...document.querySelectorAll('.'+cls)];
-  const sel = opts.filter(o => o.checked).map(o => o.dataset.val);
-  const lbl = document.getElementById(lblId);
-  lbl.textContent = sel.length === 0 || sel.length === opts.length
-    ? '📅 ' + prefix
-    : '📅 ' + prefix + ': ' + sel.length + ' เดือน';
-  document.getElementById(ddId).style.display = 'none';
-  filterByDueDate(type, sel.length === opts.length ? [] : sel);
-}
-
-function resetTabDD(type, cls, allId, lblId, defaultLbl, ddId) {
-  document.querySelectorAll('.'+cls).forEach(b => b.checked = true);
-  const allCb = document.getElementById(allId);
-  if(allCb) allCb.checked = true;
-  document.getElementById(lblId).textContent = defaultLbl;
-  document.getElementById(ddId).style.display = 'none';
-  filterByDueDate(type, []);
-}
-
-function filterByDueDate(type, months) {
-  const ci = COL.invoice, co = COL.outgoing, ca = COL.ar;
-  const colMap = { invoice: ci.duedate, outgoing: co.duedate, ar: ca.duedate };
-  const col = colMap[type];
-  const rows = document.querySelectorAll('#body-' + type + ' tr');
-  let visible = 0;
-  rows.forEach(tr => {
-    if(!months.length) { tr.style.display = ''; visible++; return; }
-    const due = tr.querySelector('td:nth-child(3)');
-    const dueText = due ? due.textContent.trim() : '';
-    const sep = dueText.includes('.') ? '.' : '/';
-    const m = extractMonthYear(dueText);
-    const show = months.includes(m);
-    tr.style.display = show ? '' : 'none';
-    if(show) visible++;
-  });
-  document.getElementById('count-'+type).textContent = visible + ' รายการ';
+  // Urgent >1 ปี AR
+  const urgAR=arRows.filter(r=>{
+    const rd=parseDueDate(g(r,ca.duedate));if(!rd)return false;
+    const now2=new Date();now2.setHours(0,0,0,0);
+    return Math.round((now2-rd)/86400000)>365;
+  }).sort((a,b)=>{
+    const ra=parseDueDate(g(a,ca.duedate)),rb=parseDueDate(g(b,ca.duedate));
+    return ra-rb;
+  }).slice(0,5);
+  document.getElementById('rpt-urgent-ar').innerHTML=urgAR.length===0
+    ?'<div style="text-align:center;padding:16px;color:#6B7A8D;font-size:12px;">ไม่มีรายการ</div>'
+    :urgAR.map(r=>{
+      const rd=parseDueDate(g(r,ca.duedate));const now2=new Date();now2.setHours(0,0,0,0);
+      const days=Math.round((now2-rd)/86400000);
+      return`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #F0F2F5;font-size:11px;">
+        <span style="font-weight:700;color:#2E7D32;min-width:60px;">${days.toLocaleString()} วัน</span>
+        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${g(r,ca.custname)}</span>
+        <span style="font-weight:600;color:#2E7D32;white-space:nowrap;">${fmtNum(g(r,ca.balance))}</span>
+      </div>`;
+    }).join('');
 }
 
 function toggleRptDD(){
@@ -1353,20 +1349,17 @@ function toggleRptDD(){
   document.querySelectorAll('.dd-panel').forEach(x=>x.style.display='none');
   if(show)p.style.display='block';
 }
-function rptToggleAllCB(cb){
-  document.querySelectorAll('.rpt-mo').forEach(b=>b.checked=cb.checked);
-}
+function rptToggleAllCB(cb){document.querySelectorAll('.rpt-mo').forEach(b=>b.checked=cb.checked);}
 function applyRptMonthDD(){
   const opts=[...document.querySelectorAll('.rpt-mo')];
-  const sel=opts.filter(o=>o.checked).map(o=>o.dataset.val);
+  const sel=opts.filter(o=>o.checked);
   document.getElementById('rpt-dd-lbl').textContent=sel.length===0||sel.length===opts.length?'ทั้งหมด':sel.length+' เดือน';
   document.getElementById('rpt-month-dd').style.display='none';
   renderReport();
 }
 function resetRptMonthDD(){
   document.querySelectorAll('.rpt-mo').forEach(b=>b.checked=true);
-  const allCb=document.getElementById('rpt-all-cb');
-  if(allCb)allCb.checked=true;
+  const allCb=document.getElementById('rpt-all-cb');if(allCb)allCb.checked=true;
   document.getElementById('rpt-dd-lbl').textContent='ทั้งหมด';
   document.getElementById('rpt-month-dd').style.display='none';
   renderReport();
